@@ -1,0 +1,10 @@
+postgres:
+  container_name: fit-db
+  ports:
+    - "35432:5432"
+  image: postgres:10
+  environment:
+    POSTGRES_DB: "fit"
+    POSTGRES_USER: "fit"
+    POSTGRES_PASSWORD: "fitpwd"
+  restart: on-failure:3

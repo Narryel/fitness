@@ -1,0 +1,12 @@
+#postgres
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:35432/fit
+    username: fit
+    password: fitpwd
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
