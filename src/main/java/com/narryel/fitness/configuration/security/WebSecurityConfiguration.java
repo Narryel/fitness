@@ -1,4 +1,4 @@
-package com.narryel.fitness.configuration;
+package com.narryel.fitness.configuration.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

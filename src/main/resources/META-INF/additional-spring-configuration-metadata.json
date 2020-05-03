@@ -1,0 +1,29 @@
+{
+  "properties": [
+    {
+      "name": "bot.longpolling.credentials.username",
+      "type": "java.lang.String",
+      "description": "User name of a telegram bot."
+    },
+    {
+      "name": "bot.longpolling.credentials.token",
+      "type": "java.lang.String",
+      "description": "Bot token get from botfather."
+    },
+    {
+      "name": "bot.ability.credentials.username",
+      "type": "java.lang.String",
+      "description": "User name of a telegram bot."
+    },
+    {
+      "name": "bot.ability.credentials.token",
+      "type": "java.lang.String",
+      "description": "Bot token get from botfather."
+    },
+    {
+      "name": "bot.ability.credentials.creatorId",
+      "type": "java.lang.Integer",
+      "description": "Id of ability bot's creator."
+    }
+  ]
+}

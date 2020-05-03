@@ -10,3 +10,18 @@ spring:
       ddl-auto: create-drop
     show-sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: 8080
+
+bot:
+  longpolling:
+    credentials:
+      username: narryelFitBot
+      token: 1180012456:AAHvREDsUkRyO0cyCJXVngLqD8j_57pVTp8
+  ability:
+    credentials:
+      creatorId: 134614839
+      username: BigBicepsBot
+      token: 945650861:AAEvgilL4B3ErwOcn2bGMiKVdFZqZ-58nls
+

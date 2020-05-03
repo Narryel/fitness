@@ -1,7 +1,14 @@
 package com.narryel.fitness.domain.entity;
 
 import com.narryel.fitness.domain.enums.TrainingStatus;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.Entity;
@@ -16,9 +23,12 @@ import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PRIVATE;
 
-@Data
+@Getter
+@Setter
 @Entity
 @FieldDefaults(level = PRIVATE)
+@NoArgsConstructor
+@Accessors(chain = true)
 public class Training extends JpaEntity {
 
     @ManyToOne
@@ -26,7 +36,7 @@ public class Training extends JpaEntity {
     FitUser user;
 
     @OneToMany(mappedBy = "training", cascade = ALL, fetch = LAZY, orphanRemoval = true)
-    List<ExerciseSet> setList;
+    List<Exercise> exercises;
 
     @Enumerated(STRING)
     TrainingStatus status;

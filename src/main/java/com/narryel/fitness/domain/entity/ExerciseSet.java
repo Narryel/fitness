@@ -7,7 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
 import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PRIVATE;
@@ -18,11 +17,11 @@ import static lombok.AccessLevel.PRIVATE;
 public class ExerciseSet extends JpaEntity {
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "training_id", referencedColumnName = "id")
-    Training training;
-
-    @OneToOne
+    @JoinColumn(name = "exercise_id", referencedColumnName = "id")
     Exercise exercise;
+
+//    @OneToOne
+//    ExerciseInfo exerciseInfo;
 
     @Column(name = "set_order")
     Integer setOrder;

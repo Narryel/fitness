@@ -1,0 +1,82 @@
+package com.narryel.fitness.bot.handlers.input;
+
+import com.narryel.fitness.domain.entity.Exercise;
+import com.narryel.fitness.domain.entity.FitUser;
+import com.narryel.fitness.domain.entity.Training;
+import com.narryel.fitness.domain.enums.State;
+import com.narryel.fitness.domain.enums.TrainingStatus;
+import com.narryel.fitness.exceptions.EntityNotFoundException;
+import com.narryel.fitness.repository.ExerciseRepository;
+import com.narryel.fitness.repository.FitUserRepository;
+import com.narryel.fitness.repository.TrainingRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.narryel.fitness.domain.enums.Command.*;
+import static com.narryel.fitness.domain.enums.State.WAITING_FOR_EXERCISE_NAME;
+
+@Service
+@RequiredArgsConstructor
+public class ExerciseNameInputHandler implements UserInputHandler {
+
+    private final FitUserRepository userRepository;
+    private final TrainingRepository trainingRepository;
+    private final ExerciseRepository exerciseRepository;
+
+    @Override
+    @Transactional
+    public SendMessage handle(Update update) {
+        final var user = update.getMessage().getFrom();
+        final var trainingName = update.getMessage().getText();
+        final var fitUser = userRepository.findByTelegramUserId(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("telegramId", user.getId().toString(), FitUser.class));
+
+        final var training = trainingRepository.findByUserAndStatus(fitUser, TrainingStatus.PLANNED)
+                .orElseGet(() -> trainingRepository.save(
+                        new Training()
+                                .setUser(fitUser)
+                                .setStatus(TrainingStatus.PLANNED)
+                        )
+                );
+
+        exerciseRepository.save(new Exercise()
+                .setName(trainingName)
+                .setTraining(training)
+        );
+
+        final var sendMessage = new SendMessage();
+        final var keyboard = new ArrayList<List<InlineKeyboardButton>>();
+
+        final var exerciseList = exerciseRepository.getAllByTraining(training);
+
+        exerciseList.forEach(exercise -> keyboard.add(
+                List.of(new InlineKeyboardButton()
+                        .setText(exercise.getName())
+                        .setCallbackData(String.format("editExercise %s", exercise.getId())))
+        ));
+        keyboard.add(List.of(new InlineKeyboardButton().setText("Добавить еще упражнение").setCallbackData(ADD_EXERCISE_CMD.getValue())));
+        keyboard.add(List.of(new InlineKeyboardButton().setText("Достаточно").setCallbackData(GET_MENU_CMD.getValue())));
+
+        sendMessage.setText("Упражнение добавлено! \n Если хочешь отредактировать упражнение - нажми на него");
+        sendMessage.setChatId(update.getMessage().getChatId());
+        sendMessage.setReplyMarkup(new InlineKeyboardMarkup(keyboard));
+        return sendMessage;
+
+
+    }
+
+    @Override
+    public State stateToHandle() {
+        return WAITING_FOR_EXERCISE_NAME;
+    }
+
+
+}

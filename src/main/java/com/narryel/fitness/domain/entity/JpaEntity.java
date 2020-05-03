@@ -1,8 +1,7 @@
 package com.narryel.fitness.domain.entity;
 
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
-import org.springframework.data.annotation.CreatedDate;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -12,23 +11,17 @@ import java.time.Instant;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+@Getter
+@Setter
 @MappedSuperclass
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public abstract class JpaEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    Long id;
+    protected Long id;
 
 
-    @CreatedDate
-    Instant createdDate;
-
-    Instant prePersistDate;
-
-    // todo
-//    @LastModifiedBy
-
+    protected Instant prePersistDate;
 
     @PrePersist
     void setPrePersistDate(){

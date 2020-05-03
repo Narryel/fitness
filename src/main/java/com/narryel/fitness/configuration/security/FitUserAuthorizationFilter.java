@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class FitUserAuthorizationFilter extends AbstractAuthenticationProcessingFilter {
 
-    gprotected FitUserAuthorizationFilter(RequestMatcher requiresAuthenticationRequestMatcher) {
+    protected FitUserAuthorizationFilter(RequestMatcher requiresAuthenticationRequestMatcher) {
         super(requiresAuthenticationRequestMatcher);
     }
 

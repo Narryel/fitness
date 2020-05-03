@@ -1,31 +1,37 @@
 package com.narryel.fitness.domain.entity;
 
-import com.narryel.fitness.domain.enums.MuscleGroup;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.util.List;
 
-import static javax.persistence.EnumType.STRING;
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PRIVATE;
 
-@Data
+@Getter
+@Setter
 @Entity
 @FieldDefaults(level = PRIVATE)
+@NoArgsConstructor
+@Accessors(chain = true)
 public class Exercise extends JpaEntity {
 
-    @Enumerated(STRING)
-    MuscleGroup muscleGroup;
+    @ManyToOne
+    @JoinColumn(name = "training_id", referencedColumnName = "id")
+    Training training;
 
-    String description;
+    String name;
 
-    @ElementCollection
-    List<String> aliases;
-
-
+    @OneToMany(mappedBy = "exercise", cascade = ALL, fetch = LAZY, orphanRemoval = true)
+    List<ExerciseSet> sets;
 
 }
