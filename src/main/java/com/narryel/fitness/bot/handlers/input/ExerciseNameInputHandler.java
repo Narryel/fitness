@@ -39,11 +39,11 @@ public class ExerciseNameInputHandler implements UserInputHandler {
         final var fitUser = userRepository.findByTelegramUserId(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException("telegramId", user.getId().toString(), FitUser.class));
 
-        final var training = trainingRepository.findByUserAndStatus(fitUser, TrainingStatus.PLANNED)
+        final var training = trainingRepository.findByUserAndStatusEqualsReady(fitUser)
                 .orElseGet(() -> trainingRepository.save(
                         new Training()
                                 .setUser(fitUser)
-                                .setStatus(TrainingStatus.PLANNED)
+                                .setStatus(TrainingStatus.IN_PLANNING)
                         )
                 );
 
@@ -63,7 +63,7 @@ public class ExerciseNameInputHandler implements UserInputHandler {
                         .setCallbackData(String.format("editExercise %s", exercise.getId())))
         ));
         keyboard.add(List.of(new InlineKeyboardButton().setText("Добавить еще упражнение").setCallbackData(ADD_EXERCISE_CMD.getValue())));
-        keyboard.add(List.of(new InlineKeyboardButton().setText("Достаточно").setCallbackData(GET_MENU_CMD.getValue())));
+        keyboard.add(List.of(new InlineKeyboardButton().setText("Достаточно").setCallbackData(FINISH_TRAINING_PLANNING_CMD.getValue())));
 
         sendMessage.setText("Упражнение добавлено! \n Если хочешь отредактировать упражнение - нажми на него");
         sendMessage.setChatId(update.getMessage().getChatId());

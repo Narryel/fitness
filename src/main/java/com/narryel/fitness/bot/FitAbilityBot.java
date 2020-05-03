@@ -5,8 +5,10 @@ import com.narryel.fitness.bot.handlers.input.UserInputHandlerFactory;
 import com.narryel.fitness.configuration.properties.AbilityBotCredentials;
 import com.narryel.fitness.domain.entity.UserState;
 import com.narryel.fitness.domain.enums.State;
+import com.narryel.fitness.repository.FitUserRepository;
+import com.narryel.fitness.repository.TrainingRepository;
 import com.narryel.fitness.repository.UserStateRepository;
-import com.narryel.fitness.util.MessageGenerators;
+import com.narryel.fitness.util.MessageGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,18 +39,31 @@ public class FitAbilityBot extends AbilityBot {
     private AbilityBotCredentials credentials;
     private UserInputHandlerFactory userInputHandlerFactory;
     private CommandHandlerFactory commandHandlerFactory;
+    private MessageGenerator messageGenerator;
+    private TrainingRepository trainingRepository;
+    private FitUserRepository fitUserRepository;
 
 
     private static final String TOKEN = "dfghjklgfdghj";
     private static final String USER_NAME = "hjkjhghgjhjlkjhgh";
 
     @Autowired
-    public FitAbilityBot(AbilityBotCredentials credentials, UserStateRepository stateRepository, UserInputHandlerFactory userInputHandlerFactory, CommandHandlerFactory commandHandlerFactory) {
+    public FitAbilityBot(AbilityBotCredentials credentials,
+                         UserStateRepository stateRepository,
+                         UserInputHandlerFactory userInputHandlerFactory,
+                         CommandHandlerFactory commandHandlerFactory,
+                         MessageGenerator messageGenerator,
+                         TrainingRepository trainingRepository,
+                         FitUserRepository fitUserRepository) {
+        //FIXME proper spring injection
         this(TOKEN, USER_NAME);
         this.credentials = credentials;
         this.stateRepository = stateRepository;
         this.userInputHandlerFactory = userInputHandlerFactory;
         this.commandHandlerFactory = commandHandlerFactory;
+        this.messageGenerator = messageGenerator;
+        this.trainingRepository = trainingRepository;
+        this.fitUserRepository= fitUserRepository;
     }
 
     protected FitAbilityBot(String botToken, String botUsername) {
@@ -148,7 +163,7 @@ public class FitAbilityBot extends AbilityBot {
                             log.error("can't parse user request. Request text: {}", ctx.update().getMessage().getText());
                         }
                         if (ctx.update().hasCallbackQuery()) {
-                            log.error("can't parse user request. Request text: {}", ctx.update().getCallbackQuery().getData());
+                            log.error("can't parse user request. Request callbackquery data: {}", ctx.update().getCallbackQuery().getData());
                         }
                         silent.send("не понимать", ctx.chatId());
 
@@ -174,7 +189,6 @@ public class FitAbilityBot extends AbilityBot {
             silent.send("Введите название первого упражнение", chatId);
             stateRepository.save(new UserState(State.WAITING_FOR_EXERCISE_NAME, chatId));
         };
-
         return Reply.of(action, callbackDataEquals(PLAN_TRAINING_CMD.getValue()));
     }
 
@@ -184,28 +198,34 @@ public class FitAbilityBot extends AbilityBot {
             silent.send("Введите название упражнения", chatId);
             stateRepository.save(new UserState(State.WAITING_FOR_EXERCISE_NAME, chatId));
         };
-
         return Reply.of(action, callbackDataEquals(ADD_EXERCISE_CMD.getValue()));
     }
 
     public Reply getMenu() {
         Consumer<Update> action = upd -> {
             final var chatId = upd.getCallbackQuery().getMessage().getChatId();
-            silent.execute(MessageGenerators.getMenu(chatId));
+            silent.execute(messageGenerator.getMenu(chatId));
         };
-
         return Reply.of(action, callbackDataEquals(GET_MENU_CMD.getValue()));
+    }
+
+    public Reply finishTrainingPlanning() {
+        Consumer<Update> action = upd -> {
+            final var chatId = upd.getCallbackQuery().getMessage().getChatId();
+            final var message = commandHandlerFactory.getHandler(FINISH_TRAINING_PLANNING_CMD).handleCommand(chatId);
+            silent.execute(message);
+        };
+        return Reply.of(action, callbackDataEquals(FINISH_TRAINING_PLANNING_CMD.getValue()));
     }
 
     public Reply startTraining() {
         Consumer<Update> action = upd -> {
             final var chatId = upd.getCallbackQuery().getMessage().getChatId();
-            final var sendMessage = commandHandlerFactory.getHandler(START_TRAINING_CMD).handleCommand();
-            sendMessage.setChatId(chatId);
+            final var sendMessage = commandHandlerFactory.getHandler(CHOOSE_TRAINING_TO_START_CMD).handleCommand(chatId);
             silent.execute(sendMessage);
         };
 
-        return Reply.of(action, callbackDataEquals(START_TRAINING_CMD.getValue()));
+        return Reply.of(action, callbackDataEquals(CHOOSE_TRAINING_TO_START_CMD.getValue()));
     }
 
 

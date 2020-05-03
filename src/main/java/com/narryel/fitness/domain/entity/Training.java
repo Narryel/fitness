@@ -40,4 +40,6 @@ public class Training extends JpaEntity {
 
     @Enumerated(STRING)
     TrainingStatus status;
+
+
 }

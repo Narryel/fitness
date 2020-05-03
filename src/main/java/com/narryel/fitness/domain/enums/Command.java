@@ -11,7 +11,9 @@ public enum Command {
     PLAN_TRAINING_CMD("planTraining"),
     ADD_EXERCISE_CMD("addExercise"),
     GET_MENU_CMD("getMenu"),
-    START_TRAINING_CMD("startTraining");
+    CHOOSE_TRAINING_TO_START_CMD("chooseTrainingToStart"),
+    FINISH_TRAINING_PLANNING_CMD("finishTrainingPlanning"),
+    START_TRAINING("startTraining");
 
 
     String value;
