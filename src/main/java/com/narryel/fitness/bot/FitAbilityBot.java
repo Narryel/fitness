@@ -36,8 +36,8 @@ public class FitAbilityBot extends AbilityBot {
     private MessageGenerator messageGenerator;
 
 
-    private static final String TOKEN = "dfghjklgfdghj";
-    private static final String USER_NAME = "hjkjhghgjhjlkjhgh";
+    private static final String TOKEN = "945650861:AAEvgilL4B3ErwOcn2bGMiKVdFZqZ-58nls";
+    private static final String USER_NAME = "BigBicepsBot";
 
     @Autowired
     public FitAbilityBot(AbilityBotCredentials credentials,
