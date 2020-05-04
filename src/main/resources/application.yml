@@ -1,9 +1,9 @@
 #postgres
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:35432/fit
-    username: fit
-    password: fitpwd
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:35432/fit}
+    username: ${SPRING_DATASOURCE_USERNAME:fit}
+    password: ${SPRING_DATASOURCE_PASSWORD:fitpwd}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -15,13 +15,9 @@ server:
   port: 8080
 
 bot:
-  longpolling:
-    credentials:
-      username: knjkjjhbhuh
-      token: fcghkjhghiokiu
   ability:
     credentials:
       creatorId: 134614839
-      username: bjjihjh
-      token: vghjhgvhihj
+      username: BigBicepsBot
+      token: 945650861:AAEvgilL4B3ErwOcn2bGMiKVdFZqZ-58nls
 

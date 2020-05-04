@@ -1,7 +1,6 @@
 package com.narryel.fitness.configuration;
 
 import com.narryel.fitness.bot.FitAbilityBot;
-import com.narryel.fitness.bot.FitBot;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -17,12 +16,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BotConfig {
 
-    private final FitBot fitBot;
     private final FitAbilityBot fitAbilityBot;
 
     @PostConstruct
     private void init() {
-        registerBot(List.of(fitAbilityBot, fitBot));
+        registerBot(List.of(fitAbilityBot));
     }
 
     private void registerBot(List<LongPollingBot> bots) {
