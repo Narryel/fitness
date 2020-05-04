@@ -1,7 +1,16 @@
 # Fitness bot
 
 fitness bot for tracing your training activity
+@BigBicepsBot in Telegram
 
+## Features to release
+* add start and finish time to training report
+* add training name
+* add change weight command
+* add change exercise support in training plan
+* add train&go support 
+* add predefined exercises
+ 
 ## Built With
 
 * [Java](https://oracle.com/java) - Best Language ever (No)
@@ -18,10 +27,5 @@ fitness bot for tracing your training activity
 
 * [Chase](https://github.com/Chase22) for huge help with bot library
 * Queen for beautiful music
-* All my fans for support
-
-
-todo 
-    - в отчете добавить время старта и финиша тренировки
-     
+* All my fans for support 
     
