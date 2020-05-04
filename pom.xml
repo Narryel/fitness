@@ -134,7 +134,7 @@
                 <version>3.7.0</version>
                 <configuration>
                     <source>${java.version}</source>
-                    <target>Fatal error compiling: invalid flag: --release</target>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
         </plugins>
