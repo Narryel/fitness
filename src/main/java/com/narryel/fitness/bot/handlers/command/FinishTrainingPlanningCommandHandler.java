@@ -9,8 +9,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
-import static com.narryel.fitness.domain.enums.Command.FINISH_TRAINING_PLANNING_CMD;
+import java.util.Objects;
+
+import static com.narryel.fitness.domain.enums.Command.FINISH_TRAINING_PLANNING;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +24,8 @@ public class FinishTrainingPlanningCommandHandler implements CommandHandler {
 
     @Override
     @Transactional
-    public SendMessage handleCommand(Long chatId) {
+    public SendMessage handleCommand(Update update) {
+        final var chatId = Objects.requireNonNull(update.getCallbackQuery().getMessage().getChatId());
         final var user = fitUserRepository.findByChatId(chatId)
                 .orElseThrow(EntityNotFoundException::new);
         trainingRepository.finishPlanningUserTraining(user);
@@ -30,6 +34,6 @@ public class FinishTrainingPlanningCommandHandler implements CommandHandler {
 
     @Override
     public Command commandToHandle() {
-        return FINISH_TRAINING_PLANNING_CMD;
+        return FINISH_TRAINING_PLANNING;
     }
 }

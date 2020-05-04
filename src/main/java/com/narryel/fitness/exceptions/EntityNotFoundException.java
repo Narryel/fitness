@@ -17,16 +17,16 @@ public class EntityNotFoundException extends RuntimeException {
         super(cause);
     }
 
-    public EntityNotFoundException(String id, Class<?> clazz) {
+    public EntityNotFoundException(Long id, Class<?> clazz) {
         super(String.format("Не удалось найти сущность [%s] по id [%s]", clazz.getSimpleName(), id));
     }
 
     /**
      * Пробрасывать когда искали сущность не по ID, в остальных случаях использовать
-     * @see #EntityNotFoundException(String id, Class clazz)
+     * @see #EntityNotFoundException(Long id, Class clazz)
      */
-    public EntityNotFoundException(String fieldName, String id, Class<?> clazz) {
-        super(String.format("Не удалось найти сущность [%s] по полю [%s] = [%s]", clazz, fieldName, id));
+    public EntityNotFoundException(String fieldName, Object id, Class<?> clazz) {
+        super(String.format("Не удалось найти сущность [%s] по полю [%s] = [%s]", clazz, fieldName, id.toString()));
     }
 
 }

@@ -9,6 +9,7 @@ import com.narryel.fitness.exceptions.EntityNotFoundException;
 import com.narryel.fitness.repository.ExerciseRepository;
 import com.narryel.fitness.repository.FitUserRepository;
 import com.narryel.fitness.repository.TrainingRepository;
+import com.narryel.fitness.repository.UserStateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,10 +31,13 @@ public class ExerciseNameInputHandler implements UserInputHandler {
     private final FitUserRepository userRepository;
     private final TrainingRepository trainingRepository;
     private final ExerciseRepository exerciseRepository;
+    private final UserStateRepository stateRepository;
 
     @Override
     @Transactional
     public SendMessage handle(Update update) {
+        stateRepository.deleteByChatId(update.getMessage().getChatId());
+
         final var user = update.getMessage().getFrom();
         final var trainingName = update.getMessage().getText();
         final var fitUser = userRepository.findByTelegramUserId(user.getId())
@@ -52,19 +56,18 @@ public class ExerciseNameInputHandler implements UserInputHandler {
                 .setTraining(training)
         );
 
-        final var sendMessage = new SendMessage();
-        final var keyboard = new ArrayList<List<InlineKeyboardButton>>();
-
         final var exerciseList = exerciseRepository.getAllByTraining(training);
 
+        final var keyboard = new ArrayList<List<InlineKeyboardButton>>();
         exerciseList.forEach(exercise -> keyboard.add(
                 List.of(new InlineKeyboardButton()
                         .setText(exercise.getName())
                         .setCallbackData(String.format("editExercise %s", exercise.getId())))
         ));
-        keyboard.add(List.of(new InlineKeyboardButton().setText("Добавить еще упражнение").setCallbackData(ADD_EXERCISE_CMD.getValue())));
-        keyboard.add(List.of(new InlineKeyboardButton().setText("Достаточно").setCallbackData(FINISH_TRAINING_PLANNING_CMD.getValue())));
+        keyboard.add(List.of(new InlineKeyboardButton().setText("Добавить еще упражнение").setCallbackData(ADD_EXERCISE.getValue())));
+        keyboard.add(List.of(new InlineKeyboardButton().setText("Достаточно").setCallbackData(FINISH_TRAINING_PLANNING.getValue())));
 
+        final var sendMessage = new SendMessage();
         sendMessage.setText("Упражнение добавлено! \n Если хочешь отредактировать упражнение - нажми на него");
         sendMessage.setChatId(update.getMessage().getChatId());
         sendMessage.setReplyMarkup(new InlineKeyboardMarkup(keyboard));

@@ -1,6 +1,7 @@
 package com.narryel.fitness.domain.entity;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.Column;
@@ -8,12 +9,15 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import java.math.BigDecimal;
+
 import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PRIVATE;
 
 @Data
 @Entity
 @FieldDefaults(level = PRIVATE)
+@Accessors(chain = true)
 public class ExerciseSet extends JpaEntity {
 
     @ManyToOne(fetch = LAZY)
@@ -29,7 +33,7 @@ public class ExerciseSet extends JpaEntity {
     @Column(name = "rep_count")
     Integer repCount;
 
-    Integer weight;
+    BigDecimal weight;
 
 
 }

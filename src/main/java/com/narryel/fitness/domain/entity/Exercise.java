@@ -1,6 +1,5 @@
 package com.narryel.fitness.domain.entity;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import java.math.BigDecimal;
 import java.util.List;
 
 import static javax.persistence.CascadeType.ALL;
@@ -33,5 +33,7 @@ public class Exercise extends JpaEntity {
 
     @OneToMany(mappedBy = "exercise", cascade = ALL, fetch = LAZY, orphanRemoval = true)
     List<ExerciseSet> sets;
+
+    BigDecimal weight;
 
 }

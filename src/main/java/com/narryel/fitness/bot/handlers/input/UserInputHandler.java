@@ -6,5 +6,13 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 public interface UserInputHandler {
     SendMessage handle(Update update);
+
     State stateToHandle();
+
+    default Long getChatId(Update update) {
+        return update.getMessage().getChatId();
+    }
+    default String getText(Update update) {
+        return update.getMessage().getText();
+    }
 }

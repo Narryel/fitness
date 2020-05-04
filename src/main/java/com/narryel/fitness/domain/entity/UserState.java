@@ -1,7 +1,6 @@
 package com.narryel.fitness.domain.entity;
 
 import com.narryel.fitness.domain.enums.State;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,7 +16,6 @@ import static javax.persistence.EnumType.STRING;
 @Accessors(chain = true)
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class UserState extends JpaEntity{
 
@@ -26,4 +24,7 @@ public class UserState extends JpaEntity{
 
     @Column(unique = true)
     Long chatId;
+
+    @Column
+    Long exerciseId;
 }
