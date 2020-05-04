@@ -131,9 +131,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>LATEST</version>
                 <configuration>
-                    <release>11</release>
+                    <source>${java.version}</source>
+                    <target>Fatal error compiling: invalid flag: --release</target>
                 </configuration>
             </plugin>
         </plugins>
