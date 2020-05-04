@@ -14,14 +14,9 @@ import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
 import org.telegram.abilitybots.api.objects.Flag;
 import org.telegram.abilitybots.api.objects.Reply;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -82,39 +77,6 @@ public class FitAbilityBot extends AbilityBot {
 
     }
 
-    public Ability sayHelloWorld() {
-        return Ability
-                .builder()
-                .name("start")
-                .info("register")
-                .locality(ALL)
-                .privacy(PUBLIC)
-                .action(ctx -> {
-                            final var inlineKeyboardMarkup = new InlineKeyboardMarkup();
-                            final var button1 = new InlineKeyboardButton();
-                            button1.setText("Зарегистрироваться");
-                            button1.setCallbackData(REGISTER_USER.getValue());
-//                            final var button2 = new InlineKeyboardButton();
-//                            button2.setText("кто я");
-//                            button2.setCallbackData("me");
-                            inlineKeyboardMarkup.setKeyboard(List.of(List.of(button1)));
-
-                            var message = new SendMessage() // Create a SendMessage object with mandatory fields
-                                    .setChatId(ctx.update().getMessage().getChatId())
-                                    .setText("Новенький у нас? зарегистрируемся?")
-                                    .setReplyMarkup(inlineKeyboardMarkup);
-
-
-                            try {
-                                execute(message);
-                            } catch (TelegramApiException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                )
-                .build();
-    }
-
     public Ability registerUser() {
         return Ability
                 .builder()
@@ -150,7 +112,6 @@ public class FitAbilityBot extends AbilityBot {
                                 .getHandler(optional.get().getState())
                                 .handle(ctx.update());
                         silent.execute(message);
-//                        stateRepository.delete(optional.get());
                     } else {
                         if (ctx.update().hasMessage()) {
                             log.error("can't parse user request. Request text: {}", ctx.update().getMessage().getText());
@@ -165,10 +126,18 @@ public class FitAbilityBot extends AbilityBot {
                 .build();
     }
 
+    public Reply start() {
+        Consumer<Update> action = upd -> {
+            final var message = commandHandlerFactory.getHandler(START).handleCommand(upd);
+            silent.execute(message);
+        };
+        return Reply.of(action, textEquals(START));
+    }
+
     public Reply planTrainingReply() {
         Consumer<Update> action = upd -> {
             final var chatId = upd.getCallbackQuery().getMessage().getChatId();
-            silent.send("Введите название первого упражнение", chatId);
+            silent.send("Введите название первого упражнения", chatId);
             stateRepository.save(new UserState().setState(WAITING_FOR_EXERCISE_NAME).setChatId(chatId));
         };
         return Reply.of(action, callbackDataEquals(PLAN_TRAINING));
@@ -228,7 +197,7 @@ public class FitAbilityBot extends AbilityBot {
                             .replace(START_EXERCISE.getValue() + " ", "")
             );
             stateRepository.save(new UserState().setState(WAITING_FOR_WEIGHT).setChatId(chatId).setExerciseId(exerciseId));
-            silent.send("Введите вес, с которым будете заниматься", chatId);
+            silent.send("Введите вес, с которым будете заниматься\nЕсли предполагается вес тела - введите 0", chatId);
         };
         return Reply.of(action, callbackDataContains(START_EXERCISE));
     }
@@ -238,11 +207,16 @@ public class FitAbilityBot extends AbilityBot {
             final var sendMessage = commandHandlerFactory.getHandler(FINISH_EXERCISE).handleCommand(upd);
             silent.execute(sendMessage);
         };
-        return Reply.of(action, callbackDataEquals(FINISH_EXERCISE));
+        return Reply.of(action, callbackDataContains(FINISH_EXERCISE));
     }
 
-
-
+    public Reply finishTraining() {
+        Consumer<Update> action = upd -> {
+            final var sendMessage = commandHandlerFactory.getHandler(FINISH_TRAINING).handleCommand(upd);
+            silent.execute(sendMessage);
+        };
+        return Reply.of(action, callbackDataContains(FINISH_TRAINING));
+    }
 
     private Predicate<Update> callbackDataEquals(Command command) {
         return update -> {
@@ -264,4 +238,16 @@ public class FitAbilityBot extends AbilityBot {
         };
     }
 
+    private Predicate<Update> textEquals(Command command) {
+        return update -> {
+            final var message = update.getMessage();
+            if (message == null) {
+                return false;
+            }
+            if (!message.hasText()) {
+                return false;
+            }
+            return command.getValue().equals(message.getText());
+        };
+    }
 }

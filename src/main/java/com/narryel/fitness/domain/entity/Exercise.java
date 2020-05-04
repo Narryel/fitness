@@ -1,5 +1,6 @@
 package com.narryel.fitness.domain.entity;
 
+import com.narryel.fitness.domain.enums.TrainingStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,6 +8,7 @@ import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -14,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PRIVATE;
 
@@ -36,4 +39,6 @@ public class Exercise extends JpaEntity {
 
     BigDecimal weight;
 
+    @Enumerated(STRING)
+    TrainingStatus status;
 }

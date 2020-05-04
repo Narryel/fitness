@@ -28,4 +28,11 @@ public interface TrainingRepository extends JpaRepository<Training, Long> {
             "and training.status = 'IN_PLANNING'")
     void finishPlanningUserTraining(FitUser user);
 
+
+
+    @Modifying
+    @Query("update Training training " +
+            "set training.status = :status " +
+            "where training.id = :id")
+    void setTrainingStatusWithTrainingId(TrainingStatus status, Long id);
  }

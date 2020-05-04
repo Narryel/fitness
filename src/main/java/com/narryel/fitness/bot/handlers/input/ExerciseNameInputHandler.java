@@ -54,6 +54,7 @@ public class ExerciseNameInputHandler implements UserInputHandler {
         exerciseRepository.save(new Exercise()
                 .setName(trainingName)
                 .setTraining(training)
+                .setStatus(TrainingStatus.READY)
         );
 
         final var exerciseList = exerciseRepository.getAllByTraining(training);

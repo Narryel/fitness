@@ -1,7 +1,6 @@
 package com.narryel.fitness.bot.handlers.input;
 
 import com.narryel.fitness.domain.entity.ExerciseSet;
-import com.narryel.fitness.domain.enums.Command;
 import com.narryel.fitness.domain.enums.State;
 import com.narryel.fitness.exceptions.EntityNotFoundException;
 import com.narryel.fitness.repository.ExerciseRepository;
@@ -19,7 +18,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.narryel.fitness.domain.enums.Command.*;
+import static com.narryel.fitness.domain.enums.Command.CHANGE_WEIGHT;
+import static com.narryel.fitness.domain.enums.Command.FINISH_EXERCISE;
 import static com.narryel.fitness.domain.enums.State.WAITING_FOR_REPS;
 
 @Service

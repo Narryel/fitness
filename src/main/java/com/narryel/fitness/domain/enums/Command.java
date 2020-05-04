@@ -16,7 +16,8 @@ public enum Command {
     START_TRAINING("startTraining"),
     START_EXERCISE("startExercise"),
     CHANGE_WEIGHT("changeWeight"),
-    FINISH_EXERCISE("finishExercise");
+    FINISH_EXERCISE("finishExercise"),
+    FINISH_TRAINING("finishTraining");
 
 
     String value;

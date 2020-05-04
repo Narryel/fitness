@@ -11,10 +11,10 @@ public interface CommandHandler {
     Command commandToHandle();
 
     default Long getChatId(Update update) {
-        return update.getMessage().getChatId();
+        return update.getCallbackQuery().getMessage().getChatId();
     }
 
     default String getData(Update update) {
-        return update.getMessage().getText();
+        return update.getCallbackQuery().getData();
     }
 }
