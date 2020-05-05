@@ -9,6 +9,7 @@ import com.narryel.fitness.repository.UserStateRepository;
 import com.narryel.fitness.util.MessageGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.bot.AbilityBot;
@@ -28,6 +29,7 @@ import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 
 @Slf4j
 @Component
+@EnableScheduling
 public class FitAbilityBot extends AbilityBot {
 
     private final UserStateRepository stateRepository;
@@ -213,7 +215,7 @@ public class FitAbilityBot extends AbilityBot {
     }
 
 
-    @Scheduled(cron = "0 3 * * * *")
+    @Scheduled(cron = "0 5 * * * *")
     private void notifyThatImAlive() {
         silent.send("я жив и не сдох", creatorId());
         log.info("я жив и не сдох");
