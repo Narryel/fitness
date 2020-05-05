@@ -9,6 +9,7 @@ import com.narryel.fitness.repository.UserStateRepository;
 import com.narryel.fitness.util.MessageGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
@@ -29,15 +30,11 @@ import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 @Component
 public class FitAbilityBot extends AbilityBot {
 
-    private UserStateRepository stateRepository;
-    private AbilityBotCredentials credentials;
-    private UserInputHandlerFactory userInputHandlerFactory;
-    private CommandHandlerFactory commandHandlerFactory;
-    private MessageGenerator messageGenerator;
-
-
-    private static final String TOKEN = "945650861:AAEvgilL4B3ErwOcn2bGMiKVdFZqZ-58nls";
-    private static final String USER_NAME = "BigBicepsBot";
+    private final UserStateRepository stateRepository;
+    private final AbilityBotCredentials credentials;
+    private final UserInputHandlerFactory userInputHandlerFactory;
+    private final CommandHandlerFactory commandHandlerFactory;
+    private final MessageGenerator messageGenerator;
 
     @Autowired
     public FitAbilityBot(AbilityBotCredentials credentials,
@@ -45,17 +42,13 @@ public class FitAbilityBot extends AbilityBot {
                          UserInputHandlerFactory userInputHandlerFactory,
                          CommandHandlerFactory commandHandlerFactory,
                          MessageGenerator messageGenerator) {
-        //FIXME proper spring injection
-        this(TOKEN, USER_NAME);
+
+        super(credentials.getToken(), credentials.getUserName());
         this.credentials = credentials;
         this.stateRepository = stateRepository;
         this.userInputHandlerFactory = userInputHandlerFactory;
         this.commandHandlerFactory = commandHandlerFactory;
         this.messageGenerator = messageGenerator;
-    }
-
-    protected FitAbilityBot(String botToken, String botUsername) {
-        super(botToken, botUsername);
     }
 
     @Override
@@ -186,6 +179,7 @@ public class FitAbilityBot extends AbilityBot {
 
 
     //todo попробовать сюда же запихнуть изменение веса
+
     /**
      * прокидываем ExerciseId через state, чтобы зафиксировать вес у упражнения
      */
@@ -217,6 +211,15 @@ public class FitAbilityBot extends AbilityBot {
         };
         return Reply.of(action, callbackDataContains(FINISH_TRAINING));
     }
+
+
+    @Scheduled(cron = "0 3 * * * *")
+    private void notifyThatImAlive() {
+        silent.send("я жив и не сдох", creatorId());
+        log.info("я жив и не сдох");
+
+    }
+
 
     private Predicate<Update> callbackDataEquals(Command command) {
         return update -> {
