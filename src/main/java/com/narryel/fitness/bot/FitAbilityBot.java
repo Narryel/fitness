@@ -215,7 +215,7 @@ public class FitAbilityBot extends AbilityBot {
     }
 
 
-    @Scheduled(cron = "0 5 * * * *")
+    @Scheduled(cron = "0 */5 * * * *")
     private void notifyThatImAlive() {
         silent.send("я жив и не сдох", creatorId());
         log.info("я жив и не сдох");

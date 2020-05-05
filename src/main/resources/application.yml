@@ -18,6 +18,5 @@ bot:
   ability:
     credentials:
       creatorId: 134614839
-      username: BigBicepsBot
-      token: 945650861:AAEvgilL4B3ErwOcn2bGMiKVdFZqZ-58nls
-
+      username: ${BOT_USERNAME}
+      token: ${BOT_TOKEN}
