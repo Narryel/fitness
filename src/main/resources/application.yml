@@ -17,6 +17,6 @@ server:
 bot:
   ability:
     credentials:
-      creatorId: 134614839
+      creatorId: ${CREATOR_ID}
       username: ${BOT_USERNAME}
       token: ${BOT_TOKEN}
