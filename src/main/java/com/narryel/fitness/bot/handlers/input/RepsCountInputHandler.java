@@ -56,7 +56,7 @@ public class RepsCountInputHandler implements UserInputHandler {
 
         stringBuilder.append("\n\nВведите кол-во повторений или выберите опцию:");
         final var keyboard = new ArrayList<List<InlineKeyboardButton>>();
-        keyboard.add(List.of(new InlineKeyboardButton().setText("Изменить вес").setCallbackData(CHANGE_WEIGHT.getValue())));
+        keyboard.add(List.of(new InlineKeyboardButton().setText("Изменить вес").setCallbackData(CHANGE_WEIGHT.getValue() + "" + exercise.getId())));
         keyboard.add(List.of(new InlineKeyboardButton().setText("Закончить упражнение").setCallbackData(FINISH_EXERCISE.getValue() + " " + exercise.getId())));
 
         final var sendMessage = new SendMessage();

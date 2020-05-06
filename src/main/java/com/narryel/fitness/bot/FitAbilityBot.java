@@ -5,6 +5,7 @@ import com.narryel.fitness.bot.handlers.input.UserInputHandlerFactory;
 import com.narryel.fitness.configuration.properties.AbilityBotCredentials;
 import com.narryel.fitness.domain.entity.UserState;
 import com.narryel.fitness.domain.enums.Command;
+import com.narryel.fitness.exceptions.EntityNotFoundException;
 import com.narryel.fitness.repository.UserStateRepository;
 import com.narryel.fitness.util.MessageGenerator;
 import lombok.extern.slf4j.Slf4j;
@@ -200,6 +201,19 @@ public class FitAbilityBot extends AbilityBot {
             silent.send("Введите вес, с которым будете заниматься\nЕсли предполагается вес тела - введите 0", chatId);
         };
         return Reply.of(action, callbackDataContains(START_EXERCISE));
+    }
+
+    public Reply changeWeight() {
+        Consumer<Update> action = upd -> {
+            final var chatId = upd.getCallbackQuery().getMessage().getChatId();
+            final var state = stateRepository.findByChatId(chatId)
+                    .orElseThrow(() -> new EntityNotFoundException("chatId", chatId, UserState.class));
+            state.setState(WAITING_FOR_WEIGHT);
+            stateRepository.save(state);
+
+            silent.send("Введите новый вес", chatId);
+        };
+        return Reply.of(action, callbackDataContains(CHANGE_WEIGHT));
     }
 
     public Reply finishExercise() {

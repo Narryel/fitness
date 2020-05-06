@@ -38,17 +38,18 @@ public class FillDbWithTestData {
                 .setTelegramUserId(134614839)
         );
 
-        final var exerciseList = List.of(
-                new Exercise().setName("Подъем штанги на бицепс").setStatus(TrainingStatus.READY),
-                new Exercise().setName("Разгибание гантели на трицепс").setStatus(TrainingStatus.READY),
-                new Exercise().setName("Пресс").setStatus(TrainingStatus.READY)
-        );
-        final var persistedTraining = trainingRepository.save(new Training().setUser(user).setStatus(TrainingStatus.READY).setExercises(exerciseList));
+        final var persistedTraining = trainingRepository.save(new Training().setUser(user).setStatus(TrainingStatus.READY));
 
-//        exerciseList.forEach(exercise -> {
-//            exercise.setTraining(persistedTraining);
-//            exerciseRepository.save(exercise);
-//        });
+        final var exerciseList = List.of(
+                new Exercise().setName("Подъем штанги на бицепс").setStatus(TrainingStatus.READY).setTraining(persistedTraining),
+                new Exercise().setName("Разгибание гантели на трицепс").setStatus(TrainingStatus.READY).setTraining(persistedTraining),
+                new Exercise().setName("Пресс").setStatus(TrainingStatus.READY).setTraining(persistedTraining)
+        );
+
+        exerciseList.forEach(exercise -> {
+            exercise.setTraining(persistedTraining);
+            exerciseRepository.save(exercise);
+        });
 
 
     }
