@@ -24,6 +24,21 @@
       "name": "bot.ability.credentials.creatorId",
       "type": "java.lang.Integer",
       "description": "Id of ability bot's creator."
+    },
+    {
+      "name": "cron.every_one_minute",
+      "type": "java.lang.String",
+      "description": "Cron that triggers every one minute."
+    },
+    {
+      "name": "cron.every_three_minute",
+      "type": "java.lang.String",
+      "description": "Cron that triggers every three minutes."
+    },
+    {
+      "name": "cron.every_five_minute",
+      "type": "java.lang.String",
+      "description": "Cron that triggers every five minutes."
     }
   ]
 }

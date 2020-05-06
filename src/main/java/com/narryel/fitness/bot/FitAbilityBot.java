@@ -31,6 +31,9 @@ import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 @Component
 @EnableScheduling
 public class FitAbilityBot extends AbilityBot {
+    public static final String EVERY_ONE_MINUTE = "0 */1 * * * *";
+    public static final String EVERY_THREE_MINUTES = "0 */3 * * * *";
+    public static final String EVERY_FIVE_MINUTES = "0 */5 * * * *";
 
     private final UserStateRepository stateRepository;
     private final AbilityBotCredentials credentials;
@@ -43,7 +46,8 @@ public class FitAbilityBot extends AbilityBot {
                          UserStateRepository stateRepository,
                          UserInputHandlerFactory userInputHandlerFactory,
                          CommandHandlerFactory commandHandlerFactory,
-                         MessageGenerator messageGenerator) {
+                         MessageGenerator messageGenerator
+                         ) {
 
         super(credentials.getToken(), credentials.getUserName());
         this.credentials = credentials;
@@ -215,7 +219,7 @@ public class FitAbilityBot extends AbilityBot {
     }
 
 
-    @Scheduled(cron = "0 */5 * * * *")
+    @Scheduled(cron = EVERY_THREE_MINUTES)
     private void notifyThatImAlive() {
         silent.send("я жив и не сдох", creatorId());
         log.info("я жив и не сдох");

@@ -17,6 +17,11 @@ server:
 bot:
   ability:
     credentials:
-      creatorId: ${CREATOR_ID}
+      creatorid: ${CREATOR_ID}
       username: ${BOT_USERNAME}
       token: ${BOT_TOKEN}
+
+cron:
+  every_one_minute: '0 */1 * * * *'
+  every_three_minute: '0 */3 * * * *'
+  every_five_minute: '0 */5 * * * *'
