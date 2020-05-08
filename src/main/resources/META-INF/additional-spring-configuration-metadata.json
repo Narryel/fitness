@@ -39,6 +39,11 @@
       "name": "cron.every_five_minute",
       "type": "java.lang.String",
       "description": "Cron that triggers every five minutes."
+    },
+    {
+      "name": "bot.health-ping",
+      "type": "java.lang.String",
+      "description": "need ping or no."
     }
   ]
 }

@@ -10,6 +10,7 @@ import com.narryel.fitness.repository.UserStateRepository;
 import com.narryel.fitness.util.MessageGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -35,7 +36,9 @@ public class FitAbilityBot extends AbilityBot {
     public static final String EVERY_ONE_MINUTE = "0 */1 * * * *";
     public static final String EVERY_THREE_MINUTES = "0 */3 * * * *";
     public static final String EVERY_FIVE_MINUTES = "0 */5 * * * *";
+    public static final String EVERY_ONE_HOUR = "0 */0 * * * *";
 
+    private final boolean pingNeeded;
     private final UserStateRepository stateRepository;
     private final AbilityBotCredentials credentials;
     private final UserInputHandlerFactory userInputHandlerFactory;
@@ -43,14 +46,15 @@ public class FitAbilityBot extends AbilityBot {
     private final MessageGenerator messageGenerator;
 
     @Autowired
-    public FitAbilityBot(AbilityBotCredentials credentials,
+    public FitAbilityBot(@Value("${bot.health-ping}") boolean pingNeeded, AbilityBotCredentials credentials,
                          UserStateRepository stateRepository,
                          UserInputHandlerFactory userInputHandlerFactory,
                          CommandHandlerFactory commandHandlerFactory,
                          MessageGenerator messageGenerator
-                         ) {
+    ) {
 
         super(credentials.getToken(), credentials.getUserName());
+        this.pingNeeded = pingNeeded;
         this.credentials = credentials;
         this.stateRepository = stateRepository;
         this.userInputHandlerFactory = userInputHandlerFactory;
@@ -233,9 +237,11 @@ public class FitAbilityBot extends AbilityBot {
     }
 
 
-    @Scheduled(cron = EVERY_THREE_MINUTES)
+    @Scheduled(cron = EVERY_ONE_HOUR)
     private void notifyThatImAlive() {
-        silent.send("я жив и не сдох", creatorId());
+        if (pingNeeded) {
+            silent.send("я жив и не сдох", creatorId());
+        }
         log.info("я жив и не сдох");
 
     }

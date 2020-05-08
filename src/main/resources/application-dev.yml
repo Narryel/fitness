@@ -17,9 +17,10 @@ server:
 bot:
   ability:
     credentials:
-      creatorId: ${CREATOR_ID}
-      username: ${TEST_BOT_USERNAME}
-      token: ${TEST_BOT_TOKEN}
+      creatorId: ${CREATOR_ID:134614839}
+      username: ${TEST_BOT_USERNAME:1180012456:AAHvREDsUkRyO0cyCJXVngLqD8j_57pVTp8}
+      token: ${TEST_BOT_TOKEN:narryelFitBot}
+  health-ping: ${PING_ENABLED:false}
 
 cron:
   every_one_minute: '0 */1 * * * *'

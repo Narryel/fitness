@@ -20,6 +20,7 @@ bot:
       creatorid: ${CREATOR_ID}
       username: ${BOT_USERNAME}
       token: ${BOT_TOKEN}
+  health-ping: ${PING_ENABLED:false}
 
 cron:
   every_one_minute: '0 */1 * * * *'
