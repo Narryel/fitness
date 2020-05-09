@@ -36,7 +36,7 @@ public class FitAbilityBot extends AbilityBot {
     public static final String EVERY_ONE_MINUTE = "0 */1 * * * *";
     public static final String EVERY_THREE_MINUTES = "0 */3 * * * *";
     public static final String EVERY_FIVE_MINUTES = "0 */5 * * * *";
-    public static final String EVERY_ONE_HOUR = "0 */0 * * * *";
+    public static final String EVERY_ONE_HOUR = "0 0 0/1 * * ?";
 
     private final boolean pingNeeded;
     private final UserStateRepository stateRepository;

@@ -7,7 +7,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     show-sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
@@ -18,8 +18,8 @@ bot:
   ability:
     credentials:
       creatorId: ${CREATOR_ID:134614839}
-      username: ${TEST_BOT_USERNAME:1180012456:AAHvREDsUkRyO0cyCJXVngLqD8j_57pVTp8}
-      token: ${TEST_BOT_TOKEN:narryelFitBot}
+      username: ${TEST_BOT_USERNAME:narryelFitBot}
+      token: ${TEST_BOT_TOKEN:1180012456:AAHvREDsUkRyO0cyCJXVngLqD8j_57pVTp8}
   health-ping: ${PING_ENABLED:false}
 
 cron:
