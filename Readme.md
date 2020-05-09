@@ -5,11 +5,12 @@ fitness bot for tracing your training activity
 
 ## Features to release
 * add start and finish time to training report
-* add training name
-* add change weight command
+* add new release features notification
 * add change exercise support in training plan
 * add train&go support 
 * add predefined exercises
+* ~~add training name~~
+* ~~add change weight command~~
  
 ## Built With
 
