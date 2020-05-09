@@ -44,12 +44,7 @@ public class ExerciseNameInputHandler implements UserInputHandler {
                 .orElseThrow(() -> new EntityNotFoundException("telegramId", user.getId().toString(), FitUser.class));
 
         final var training = trainingRepository.findByUserAndStatusEqualsReady(fitUser)
-                .orElseGet(() -> trainingRepository.save(
-                        new Training()
-                                .setUser(fitUser)
-                                .setStatus(TrainingStatus.IN_PLANNING)
-                        )
-                );
+                .orElseThrow(EntityNotFoundException::new);
 
         exerciseRepository.save(new Exercise()
                 .setName(trainingName)

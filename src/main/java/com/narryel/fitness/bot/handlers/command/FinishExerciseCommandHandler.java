@@ -45,20 +45,15 @@ public class FinishExerciseCommandHandler implements CommandHandler {
 
         final var stringBuilder = new StringBuilder("Список выполненных упражнений:\n");
         exerciseList.forEach(ex -> {
-            switch (ex.getStatus()) {
-                case FINISHED: {
-                    stringBuilder.append(ex.getName()).append(String.format(" %s %n", "\u2705"));
-                    break;
-                }
-                default: {
-                    keyboard.add(
-                            List.of(new InlineKeyboardButton()
-                                    .setText(ex.getName())
-                                    .setCallbackData(START_EXERCISE.getValue() + " " + ex.getId())
-                            )
-                    );
-                    break;
-                }
+            if (ex.getStatus() == TrainingStatus.FINISHED) {
+                stringBuilder.append(ex.getName()).append(String.format(" %s %n", "\u2705"));
+            } else {
+                keyboard.add(
+                        List.of(new InlineKeyboardButton()
+                                .setText(ex.getName())
+                                .setCallbackData(START_EXERCISE.getValue() + " " + ex.getId())
+                        )
+                );
             }
         });
         if (keyboard.isEmpty()) {

@@ -10,8 +10,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.util.List;
 
-import static com.narryel.fitness.domain.enums.Command.CHOOSE_TRAINING_TO_START;
-import static com.narryel.fitness.domain.enums.Command.PLAN_TRAINING;
+import static com.narryel.fitness.domain.enums.Command.*;
 import static com.narryel.fitness.util.MessageUtil.generateInlineKeyboard;
 
 @Service
@@ -27,8 +26,8 @@ public class MessageGenerator {
         final var sendMessage = new SendMessage();
         sendMessage.setReplyMarkup(generateInlineKeyboard(List.of(
                 Pair.of("Спланировать тренировку", PLAN_TRAINING.getValue()),
-                Pair.of("Начать тренировку", CHOOSE_TRAINING_TO_START.getValue())
-//                Pair.of("История тренировки", "viewHistory"),
+                Pair.of("Начать тренировку", CHOOSE_TRAINING_TO_START.getValue()),
+                Pair.of("История тренировок", TRAINING_HISTORY.getValue())
 //                Pair.of("Посмотреть упражнения", "viewExercise")
                 ))
         );

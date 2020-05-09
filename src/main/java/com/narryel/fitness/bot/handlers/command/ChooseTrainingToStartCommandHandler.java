@@ -30,7 +30,6 @@ public class ChooseTrainingToStartCommandHandler implements CommandHandler {
     public SendMessage handleCommand(Update update) {
         final var chatId = Objects.requireNonNull(update.getCallbackQuery().getMessage().getChatId());
 
-
         final var fitUser = userRepository.findByChatId(chatId)
                 .orElseThrow(() -> new EntityNotFoundException("chatId", chatId.toString(), FitUser.class));
 
@@ -48,8 +47,7 @@ public class ChooseTrainingToStartCommandHandler implements CommandHandler {
         final var keyboard = new ArrayList<List<InlineKeyboardButton>>();
         plannedTrainingList.forEach(training -> keyboard.add(
                 List.of(new InlineKeyboardButton()
-                        //todo Add training names
-                        .setText(training.getId().toString())
+                        .setText(training.getName())
                         .setCallbackData(START_TRAINING.getValue() + " " + training.getId())
                 )
         ));

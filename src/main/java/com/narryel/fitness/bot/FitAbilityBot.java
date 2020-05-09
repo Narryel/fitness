@@ -138,11 +138,11 @@ public class FitAbilityBot extends AbilityBot {
         return Reply.of(action, textEquals(START));
     }
 
-    public Reply planTrainingReply() {
+    public Reply planTrainingNameReply() {
         Consumer<Update> action = upd -> {
             final var chatId = upd.getCallbackQuery().getMessage().getChatId();
-            silent.send("Введите название первого упражнения", chatId);
-            stateRepository.save(new UserState().setState(WAITING_FOR_EXERCISE_NAME).setChatId(chatId));
+            silent.send("Как назовем тренировку?", chatId);
+            stateRepository.save(new UserState().setState(WAITING_FOR_TRAINING_NAME).setChatId(chatId));
         };
         return Reply.of(action, callbackDataEquals(PLAN_TRAINING));
     }
@@ -234,6 +234,22 @@ public class FitAbilityBot extends AbilityBot {
             silent.execute(sendMessage);
         };
         return Reply.of(action, callbackDataContains(FINISH_TRAINING));
+    }
+
+    public Reply openTrainingHistory() {
+        Consumer<Update> action = upd -> {
+            final var sendMessage = commandHandlerFactory.getHandler(TRAINING_HISTORY).handleCommand(upd);
+            silent.execute(sendMessage);
+        };
+        return Reply.of(action, callbackDataEquals(TRAINING_HISTORY));
+    }
+
+    public Reply viewFinishedTraining() {
+        Consumer<Update> action = upd -> {
+            final var sendMessage = commandHandlerFactory.getHandler(VIEW_FINISHED_TRAINING).handleCommand(upd);
+            silent.execute(sendMessage);
+        };
+        return Reply.of(action, callbackDataContains(VIEW_FINISHED_TRAINING));
     }
 
 

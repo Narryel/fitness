@@ -1,7 +1,6 @@
 package com.narryel.fitness.bot.handlers.command;
 
 
-import com.narryel.fitness.domain.entity.FitUser;
 import com.narryel.fitness.domain.enums.Command;
 import com.narryel.fitness.repository.FitUserRepository;
 import com.narryel.fitness.util.MessageGenerator;
@@ -26,7 +25,6 @@ public class StartCommandHandler implements CommandHandler {
 
     @Override
     public SendMessage handleCommand(Update update) {
-        //do not use CommandHandler.getChatId() cause its not a callback, but a message
         final var chatId = getChatId(update);
         final var optionalFitUser = userRepository.findByChatId(chatId);
 
