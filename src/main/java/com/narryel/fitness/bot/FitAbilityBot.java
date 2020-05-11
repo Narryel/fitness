@@ -1,6 +1,7 @@
 package com.narryel.fitness.bot;
 
 import com.narryel.fitness.bot.handlers.command.CommandHandlerFactory;
+import com.narryel.fitness.bot.handlers.input.UserInputHandler;
 import com.narryel.fitness.bot.handlers.input.UserInputHandlerFactory;
 import com.narryel.fitness.configuration.properties.AbilityBotCredentials;
 import com.narryel.fitness.domain.entity.UserState;
@@ -18,6 +19,7 @@ import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
 import org.telegram.abilitybots.api.objects.Flag;
 import org.telegram.abilitybots.api.objects.Reply;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -33,10 +35,6 @@ import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 @Component
 @EnableScheduling
 public class FitAbilityBot extends AbilityBot {
-    public static final String EVERY_ONE_MINUTE = "0 */1 * * * *";
-    public static final String EVERY_THREE_MINUTES = "0 */3 * * * *";
-    public static final String EVERY_FIVE_MINUTES = "0 */5 * * * *";
-    public static final String EVERY_ONE_HOUR = "0 0 0/1 * * ?";
 
     private final boolean pingNeeded;
     private final UserStateRepository stateRepository;
@@ -70,7 +68,7 @@ public class FitAbilityBot extends AbilityBot {
     public Ability clearState() {
         return Ability
                 .builder()
-                .name("clearState")
+                .name("clearstate")
                 .locality(ALL)
                 .privacy(PUBLIC)
                 .action(messageContext -> {
@@ -102,6 +100,7 @@ public class FitAbilityBot extends AbilityBot {
     }
 
 
+    //todo refactor
     public Ability readUserInput() {
         return Ability
                 .builder()
@@ -112,10 +111,19 @@ public class FitAbilityBot extends AbilityBot {
                 .action(ctx -> {
                     final var optional = stateRepository.findByChatId(ctx.chatId());
                     if (optional.isPresent()) {
-                        final var message = userInputHandlerFactory
-                                .getHandler(optional.get().getState())
-                                .handle(ctx.update());
-                        silent.execute(message);
+                        final var handler = userInputHandlerFactory
+                                .getHandler(optional.get().getState());
+                        final var validationResult = handler.checkInputValidity(ctx.update());
+                        SendMessage responseMessage;
+                        if (validationResult.isMessageValid()) {
+                            responseMessage = handler.handle(ctx.update());
+                        } else{
+                            responseMessage = new SendMessage()
+                                    .setChatId(ctx.chatId())
+                                    .setText(validationResult.getMessage());
+                        }
+                        silent.execute(responseMessage);
+
                     } else {
                         if (ctx.update().hasMessage()) {
                             log.error("can't parse user request. Request text: {}", ctx.update().getMessage().getText());
@@ -253,7 +261,7 @@ public class FitAbilityBot extends AbilityBot {
     }
 
 
-    @Scheduled(cron = EVERY_ONE_HOUR)
+    @Scheduled(cron = "0 0 0/1 * * ?")
     private void notifyThatImAlive() {
         if (pingNeeded) {
             silent.send("я жив и не сдох", creatorId());
@@ -261,6 +269,8 @@ public class FitAbilityBot extends AbilityBot {
         log.info("я жив и не сдох");
 
     }
+
+    //todo scheduled task to dump all user states and training statuses
 
 
     private Predicate<Update> callbackDataEquals(Command command) {

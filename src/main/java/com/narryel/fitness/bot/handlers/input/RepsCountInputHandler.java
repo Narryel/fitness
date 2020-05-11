@@ -1,11 +1,12 @@
 package com.narryel.fitness.bot.handlers.input;
 
+import com.narryel.fitness.bot.handlers.input.validation.ValidationResult;
+import com.narryel.fitness.bot.handlers.input.validation.ValidationMethods;
 import com.narryel.fitness.domain.entity.ExerciseSet;
 import com.narryel.fitness.domain.enums.State;
 import com.narryel.fitness.exceptions.EntityNotFoundException;
 import com.narryel.fitness.repository.ExerciseRepository;
 import com.narryel.fitness.repository.ExerciseSetRepository;
-import com.narryel.fitness.repository.FitUserRepository;
 import com.narryel.fitness.repository.UserStateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,11 +27,11 @@ import static com.narryel.fitness.domain.enums.State.WAITING_FOR_REPS;
 @RequiredArgsConstructor
 public class RepsCountInputHandler implements UserInputHandler {
 
+    private static final String INVALID_INPUT_MESSAGE = "Введите число повторений (целое число, больше нуля)";
     private final ExerciseSetRepository setRepository;
     private final ExerciseRepository exerciseRepository;
     private final UserStateRepository stateRepository;
-    private final FitUserRepository userRepository;
-
+    private final ValidationMethods validationMethods;
 
     @Override
     @Transactional
@@ -48,7 +49,6 @@ public class RepsCountInputHandler implements UserInputHandler {
                 .setWeight(exercise.getWeight())
                 .setSetOrder(exercise.getSets() == null ? 1 : exercise.getSets().size() + 1)
         );
-
 
         final var setList = setRepository.getAllByExercise(exercise);
         final var stringBuilder = new StringBuilder("Текущее упражнение: ").append(exercise.getName()).append("\n");
@@ -70,5 +70,11 @@ public class RepsCountInputHandler implements UserInputHandler {
     @Override
     public State stateToHandle() {
         return WAITING_FOR_REPS;
+    }
+
+    @Override
+    public ValidationResult checkInputValidity(Update update) {
+        //todo change validation to integer or migrate db to bigDecimal
+        return validationMethods.checkIfPositiveInteger(update, INVALID_INPUT_MESSAGE);
     }
 }

@@ -38,7 +38,11 @@ public class FillDbWithTestData {
                 .setTelegramUserId(134614839)
         );
 
-        final var persistedTraining = trainingRepository.save(new Training().setUser(user).setStatus(TrainingStatus.READY));
+        final var persistedTraining = trainingRepository.save(new Training()
+                .setUser(user)
+                .setStatus(TrainingStatus.READY)
+                .setName("тестовая")
+        );
 
         final var exerciseList = List.of(
                 new Exercise().setName("Подъем штанги на бицепс").setStatus(TrainingStatus.READY).setTraining(persistedTraining),

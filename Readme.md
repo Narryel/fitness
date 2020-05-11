@@ -4,12 +4,16 @@ fitness bot for tracing your training activity
 @BigBicepsBot in Telegram
 
 ## Features to release
-* add start and finish time to training report
-* add user input validation
-* add new release features notification
 * add change exercise support in training plan
+* add cancel training support (from planning)
+* add delete training from history
 * add train&go support 
+* add user cabinet
+* add suggest weight (from previous training)
+* add start and finish time to training report
+* add new release features notification
 * add predefined exercises
+* ~~add user input validation~~
 * ~~add training name~~
 * ~~add change weight command~~
  
@@ -23,7 +27,7 @@ fitness bot for tracing your training activity
 
 ## Authors
 
-* Valentin Afanasiev- *One man army* - [Narryel](https://github.com/Narryel)
+* Valentin Afanasiev - *One man army* - [Narryel](https://github.com/Narryel)
 
 ## Acknowledgments
 
