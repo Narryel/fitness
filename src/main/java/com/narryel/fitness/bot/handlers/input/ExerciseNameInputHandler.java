@@ -58,13 +58,13 @@ public class ExerciseNameInputHandler implements UserInputHandler {
         exerciseList.forEach(exercise -> keyboard.add(
                 List.of(new InlineKeyboardButton()
                         .setText(exercise.getName())
-                        .setCallbackData(String.format("editExercise %s", exercise.getId())))
+                )
         ));
         keyboard.add(List.of(new InlineKeyboardButton().setText("Добавить еще упражнение").setCallbackData(ADD_EXERCISE.getValue())));
         keyboard.add(List.of(new InlineKeyboardButton().setText("Достаточно").setCallbackData(FINISH_TRAINING_PLANNING.getValue())));
 
         final var sendMessage = new SendMessage();
-        sendMessage.setText("Упражнение добавлено! \n Если хочешь отредактировать упражнение - нажми на него");
+        sendMessage.setText("Упражнение добавлено! \n");
         sendMessage.setChatId(update.getMessage().getChatId());
         sendMessage.setReplyMarkup(new InlineKeyboardMarkup(keyboard));
         return sendMessage;

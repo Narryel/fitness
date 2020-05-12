@@ -10,9 +10,9 @@ fitness bot for tracing your training activity
 * add train&go support 
 * add user cabinet
 * add suggest weight (from previous training)
-* add start and finish time to training report
 * add new release features notification
 * add predefined exercises
+* add start and finish time to training report
 * ~~add user input validation~~
 * ~~add training name~~
 * ~~add change weight command~~

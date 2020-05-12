@@ -145,6 +145,13 @@ public class FitAbilityBot extends AbilityBot {
         };
         return Reply.of(action, textEquals(START));
     }
+    public Reply getMenu() {
+        Consumer<Update> action = upd -> {
+            final var chatId = upd.getCallbackQuery().getMessage().getChatId();
+            silent.execute(messageGenerator.getMenu(chatId));
+        };
+        return Reply.of(action, callbackDataEquals(GET_MENU));
+    }
 
     public Reply planTrainingNameReply() {
         Consumer<Update> action = upd -> {
@@ -164,12 +171,12 @@ public class FitAbilityBot extends AbilityBot {
         return Reply.of(action, callbackDataEquals(ADD_EXERCISE));
     }
 
-    public Reply getMenu() {
+    public Reply editExercise() {
         Consumer<Update> action = upd -> {
-            final var chatId = upd.getCallbackQuery().getMessage().getChatId();
-            silent.execute(messageGenerator.getMenu(chatId));
+            final var sendMessage = commandHandlerFactory.getHandler(EDIT_EXERCISE).handleCommand(upd);
+            silent.execute(sendMessage);
         };
-        return Reply.of(action, callbackDataEquals(GET_MENU));
+        return Reply.of(action, callbackDataContains(EDIT_EXERCISE));
     }
 
     public Reply finishTrainingPlanning() {

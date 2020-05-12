@@ -10,6 +10,7 @@ public enum Command {
     REGISTER_USER("registerUser"),
     PLAN_TRAINING("planTraining"),
     ADD_EXERCISE("addExercise"),
+    EDIT_EXERCISE("editExercise"),
     GET_MENU("getMenu"),
     CHOOSE_TRAINING_TO_START("chooseTrainingToStart"),
     FINISH_TRAINING_PLANNING("finishTrainingPlanning"),
