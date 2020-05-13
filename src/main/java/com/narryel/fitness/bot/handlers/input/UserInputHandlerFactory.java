@@ -15,17 +15,19 @@ public class UserInputHandlerFactory {
     private final Map<State, UserInputHandler> handlerMap;
 
     public UserInputHandlerFactory(List<UserInputHandler> handlers) {
-        handlerMap = handlers.stream().collect(toUnmodifiableMap(
-                UserInputHandler::stateToHandle,
-                handler -> handler,
-                (oldHandler, newHandler) -> {
-                    throw new IllegalStateException("duplicated state " + newHandler.stateToHandle());
-                }
-        ));
+        handlerMap = handlers
+                .stream()
+                .collect(toUnmodifiableMap(
+                        UserInputHandler::stateToHandle,
+                        handler -> handler,
+                        (oldHandler, newHandler) -> {
+                            throw new IllegalStateException("duplicated state " + newHandler.stateToHandle());
+                        }
+                ));
     }
 
     public UserInputHandler getHandlerByState(State state) {
         return Optional.ofNullable(handlerMap.get(state))
-                .orElseThrow(()-> new UnsupportedOperationException("no handler found for state "+ state));
+                .orElseThrow(() -> new UnsupportedOperationException("no handler found for state " + state));
     }
 }

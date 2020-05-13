@@ -15,18 +15,20 @@ public class CommandHandlerFactory {
     private final Map<Command, CommandHandler> handlerMap;
 
     public CommandHandlerFactory(List<CommandHandler> handlers) {
-        handlerMap = handlers.stream().collect(toUnmodifiableMap(
-                CommandHandler::commandToHandle,
-                handler -> handler,
-                (oldHandler, newHandler) -> {
-                    throw new IllegalStateException("duplicated command " + newHandler.commandToHandle());
-                }
-        ));
+        handlerMap = handlers
+                .stream()
+                .collect(toUnmodifiableMap(
+                        CommandHandler::commandToHandle,
+                        handler -> handler,
+                        (oldHandler, newHandler) -> {
+                            throw new IllegalStateException("duplicated command " + newHandler.commandToHandle());
+                        }
+                ));
     }
 
     public CommandHandler getHandlerByCommand(Command cmd) {
         return Optional.ofNullable(handlerMap.get(cmd))
-                .orElseThrow(()-> new UnsupportedOperationException("no handler found for command "+ cmd));
+                .orElseThrow(() -> new UnsupportedOperationException("no handler found for command " + cmd));
     }
 
 }
