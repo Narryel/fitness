@@ -1,30 +1,31 @@
 package com.narryel.fitness.bot.handlers.input;
 
 import com.narryel.fitness.domain.enums.State;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import static java.util.stream.Collectors.toUnmodifiableMap;
 
 @Component
-@RequiredArgsConstructor
 public class UserInputHandlerFactory {
 
-    private final List<UserInputHandler> handlers;
-    private final Map<State, UserInputHandler> handlerMap = new HashMap<>();
+    private final Map<State, UserInputHandler> handlerMap;
 
-    @PostConstruct
-    private void fillHandlerMap() {
-        for (UserInputHandler handler : handlers) {
-            handlerMap.put(handler.stateToHandle(), handler);
-        }
-
+    public UserInputHandlerFactory(List<UserInputHandler> handlers) {
+        handlerMap = handlers.stream().collect(toUnmodifiableMap(
+                UserInputHandler::stateToHandle,
+                handler -> handler,
+                (oldHandler, newHandler) -> {
+                    throw new IllegalStateException("duplicated state " + newHandler.stateToHandle());
+                }
+        ));
     }
 
-    public UserInputHandler getHandler(State state) {
-        return handlerMap.get(state);
+    public UserInputHandler getHandlerByState(State state) {
+        return Optional.ofNullable(handlerMap.get(state))
+                .orElseThrow(()-> new UnsupportedOperationException("no handler found for state "+ state));
     }
 }

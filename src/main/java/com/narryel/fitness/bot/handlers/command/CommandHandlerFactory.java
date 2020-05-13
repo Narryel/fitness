@@ -1,31 +1,32 @@
 package com.narryel.fitness.bot.handlers.command;
 
 import com.narryel.fitness.domain.enums.Command;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import static java.util.stream.Collectors.toUnmodifiableMap;
 
 @Component
-@RequiredArgsConstructor
 public class CommandHandlerFactory {
 
-    private final List<CommandHandler> handlers;
-    private final Map<Command, CommandHandler> handlerMap = new HashMap<>();
+    private final Map<Command, CommandHandler> handlerMap;
 
-    @PostConstruct
-    private void fillHandlerMap() {
-        for (CommandHandler handler : handlers) {
-            handlerMap.put(handler.commandToHandle(), handler);
-        }
-
+    public CommandHandlerFactory(List<CommandHandler> handlers) {
+        handlerMap = handlers.stream().collect(toUnmodifiableMap(
+                CommandHandler::commandToHandle,
+                handler -> handler,
+                (oldHandler, newHandler) -> {
+                    throw new IllegalStateException("duplicated command " + newHandler.commandToHandle());
+                }
+        ));
     }
 
-    public CommandHandler getHandler(Command cmd) {
-        return handlerMap.get(cmd);
+    public CommandHandler getHandlerByCommand(Command cmd) {
+        return Optional.ofNullable(handlerMap.get(cmd))
+                .orElseThrow(()-> new UnsupportedOperationException("no handler found for command "+ cmd));
     }
 
 }

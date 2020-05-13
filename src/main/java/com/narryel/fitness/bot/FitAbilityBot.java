@@ -1,7 +1,6 @@
 package com.narryel.fitness.bot;
 
 import com.narryel.fitness.bot.handlers.command.CommandHandlerFactory;
-import com.narryel.fitness.bot.handlers.input.UserInputHandler;
 import com.narryel.fitness.bot.handlers.input.UserInputHandlerFactory;
 import com.narryel.fitness.configuration.properties.AbilityBotCredentials;
 import com.narryel.fitness.domain.entity.UserState;
@@ -112,7 +111,7 @@ public class FitAbilityBot extends AbilityBot {
                     final var optional = stateRepository.findByChatId(ctx.chatId());
                     if (optional.isPresent()) {
                         final var handler = userInputHandlerFactory
-                                .getHandler(optional.get().getState());
+                                .getHandlerByState(optional.get().getState());
                         final var validationResult = handler.checkInputValidity(ctx.update());
                         SendMessage responseMessage;
                         if (validationResult.isMessageValid()) {
@@ -140,7 +139,7 @@ public class FitAbilityBot extends AbilityBot {
 
     public Reply start() {
         Consumer<Update> action = upd -> {
-            final var message = commandHandlerFactory.getHandler(START).handleCommand(upd);
+            final var message = commandHandlerFactory.getHandlerByCommand(START).handleCommand(upd);
             silent.execute(message);
         };
         return Reply.of(action, textEquals(START));
@@ -173,7 +172,7 @@ public class FitAbilityBot extends AbilityBot {
 
     public Reply editExercise() {
         Consumer<Update> action = upd -> {
-            final var sendMessage = commandHandlerFactory.getHandler(EDIT_EXERCISE).handleCommand(upd);
+            final var sendMessage = commandHandlerFactory.getHandlerByCommand(EDIT_EXERCISE).handleCommand(upd);
             silent.execute(sendMessage);
         };
         return Reply.of(action, callbackDataContains(EDIT_EXERCISE));
@@ -181,7 +180,7 @@ public class FitAbilityBot extends AbilityBot {
 
     public Reply finishTrainingPlanning() {
         Consumer<Update> action = upd -> {
-            final var message = commandHandlerFactory.getHandler(FINISH_TRAINING_PLANNING).handleCommand(upd);
+            final var message = commandHandlerFactory.getHandlerByCommand(FINISH_TRAINING_PLANNING).handleCommand(upd);
             silent.execute(message);
         };
         return Reply.of(action, callbackDataEquals(FINISH_TRAINING_PLANNING));
@@ -189,7 +188,7 @@ public class FitAbilityBot extends AbilityBot {
 
     public Reply chooseTrainingToStart() {
         Consumer<Update> action = upd -> {
-            final var sendMessage = commandHandlerFactory.getHandler(CHOOSE_TRAINING_TO_START).handleCommand(upd);
+            final var sendMessage = commandHandlerFactory.getHandlerByCommand(CHOOSE_TRAINING_TO_START).handleCommand(upd);
             silent.execute(sendMessage);
         };
         return Reply.of(action, callbackDataEquals(CHOOSE_TRAINING_TO_START));
@@ -197,7 +196,7 @@ public class FitAbilityBot extends AbilityBot {
 
     public Reply startTraining() {
         Consumer<Update> action = upd -> {
-            final var sendMessage = commandHandlerFactory.getHandler(START_TRAINING).handleCommand(upd);
+            final var sendMessage = commandHandlerFactory.getHandlerByCommand(START_TRAINING).handleCommand(upd);
             silent.execute(sendMessage);
         };
         return Reply.of(action, callbackDataContains(START_TRAINING));
@@ -237,7 +236,7 @@ public class FitAbilityBot extends AbilityBot {
 
     public Reply finishExercise() {
         Consumer<Update> action = upd -> {
-            final var sendMessage = commandHandlerFactory.getHandler(FINISH_EXERCISE).handleCommand(upd);
+            final var sendMessage = commandHandlerFactory.getHandlerByCommand(FINISH_EXERCISE).handleCommand(upd);
             silent.execute(sendMessage);
         };
         return Reply.of(action, callbackDataContains(FINISH_EXERCISE));
@@ -245,7 +244,7 @@ public class FitAbilityBot extends AbilityBot {
 
     public Reply finishTraining() {
         Consumer<Update> action = upd -> {
-            final var sendMessage = commandHandlerFactory.getHandler(FINISH_TRAINING).handleCommand(upd);
+            final var sendMessage = commandHandlerFactory.getHandlerByCommand(FINISH_TRAINING).handleCommand(upd);
             silent.execute(sendMessage);
         };
         return Reply.of(action, callbackDataContains(FINISH_TRAINING));
@@ -253,7 +252,7 @@ public class FitAbilityBot extends AbilityBot {
 
     public Reply openTrainingHistory() {
         Consumer<Update> action = upd -> {
-            final var sendMessage = commandHandlerFactory.getHandler(TRAINING_HISTORY).handleCommand(upd);
+            final var sendMessage = commandHandlerFactory.getHandlerByCommand(TRAINING_HISTORY).handleCommand(upd);
             silent.execute(sendMessage);
         };
         return Reply.of(action, callbackDataEquals(TRAINING_HISTORY));
@@ -261,7 +260,7 @@ public class FitAbilityBot extends AbilityBot {
 
     public Reply viewFinishedTraining() {
         Consumer<Update> action = upd -> {
-            final var sendMessage = commandHandlerFactory.getHandler(VIEW_FINISHED_TRAINING).handleCommand(upd);
+            final var sendMessage = commandHandlerFactory.getHandlerByCommand(VIEW_FINISHED_TRAINING).handleCommand(upd);
             silent.execute(sendMessage);
         };
         return Reply.of(action, callbackDataContains(VIEW_FINISHED_TRAINING));
