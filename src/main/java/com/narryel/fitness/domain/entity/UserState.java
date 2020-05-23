@@ -29,4 +29,7 @@ public class UserState extends JpaEntity{
 
     @Column
     Long exerciseId;
+
+    @Column
+    Long trainingId;
 }

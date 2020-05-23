@@ -48,6 +48,7 @@ public class TrainingNameInputHandler implements UserInputHandler {
 
         final var state = stateRepository.findByChatId(getChatId(update)).orElseThrow(EntityNotFoundException::new);
         state.setState(WAITING_FOR_EXERCISE_NAME);
+        state.setTrainingId(training.getId());
         return message;
     }
 

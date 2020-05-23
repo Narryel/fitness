@@ -165,9 +165,13 @@ public class FitAbilityBot extends AbilityBot {
         Consumer<Update> action = upd -> {
             final var chatId = upd.getCallbackQuery().getMessage().getChatId();
             silent.send("Введите название упражнения", chatId);
-            stateRepository.save(new UserState().setState(WAITING_FOR_EXERCISE_NAME).setChatId(chatId));
+            final var trainingId = Long.valueOf(
+                    upd.getCallbackQuery().getData()
+                            .replace(ADD_EXERCISE.getValue() + "", "")
+            );
+            stateRepository.save(new UserState().setState(WAITING_FOR_EXERCISE_NAME).setChatId(chatId).setTrainingId(trainingId));
         };
-        return Reply.of(action, callbackDataEquals(ADD_EXERCISE));
+        return Reply.of(action, callbackDataContains(ADD_EXERCISE));
     }
 
     public Reply editExercise() {

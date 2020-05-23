@@ -15,7 +15,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static com.narryel.fitness.domain.enums.Command.*;
 
@@ -28,7 +27,7 @@ public class StartTrainingCommandHandler implements CommandHandler {
     @Override
     @Transactional
     public SendMessage handleCommand(Update update) {
-        final var chatId = Objects.requireNonNull(update.getCallbackQuery().getMessage().getChatId());
+        final var chatId = getChatId(update);
         final var message = new SendMessage();
 
         final var data = update.getCallbackQuery().getData();
@@ -45,7 +44,11 @@ public class StartTrainingCommandHandler implements CommandHandler {
                         .setText(exercise.getName())
                         .setCallbackData(String.format("%s %d", START_EXERCISE.getValue(), exercise.getId())))
         ));
-        keyboard.add(List.of(new InlineKeyboardButton().setText("Меню").setCallbackData(GET_MENU.getValue())));
+
+        keyboard.add(List.of(new InlineKeyboardButton().setText("Добавить еще упражнение").setCallbackData(ADD_EXERCISE.getValue() + training.getId()),
+                new InlineKeyboardButton().setText("Закончить тренировку").setCallbackData(FINISH_TRAINING.getValue() + training.getId())));
+//        keyboard.add(List.of(new InlineKeyboardButton().setText("Меню").setCallbackData(GET_MENU.getValue())));
+
 
         message.setText("К какому упражнению приступим?");
         message.setReplyMarkup(new InlineKeyboardMarkup(keyboard));

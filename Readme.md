@@ -12,7 +12,9 @@ fitness bot for tracing your training activity
 * add suggest weight (from previous training)
 * add new release features notification
 * add predefined exercises
+* add change exercise support in training plan (is it needed tho?)
 * add start and finish time to training report
+* ~~support adding exercises in active training~~
 * ~~add user input validation~~
 * ~~add training name~~
 * ~~add change weight command~~

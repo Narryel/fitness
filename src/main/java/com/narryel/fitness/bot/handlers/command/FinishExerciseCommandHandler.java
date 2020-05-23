@@ -63,7 +63,7 @@ public class FinishExerciseCommandHandler implements CommandHandler {
             stringBuilder.insert(0, "Отлично! Какое упражнение делаем следующим?\n");
 
         }
-
+        keyboard.add(List.of(new InlineKeyboardButton().setText("Добавить еще упражнение").setCallbackData(ADD_EXERCISE.getValue() + exercise.getTraining().getId())));
         keyboard.add(List.of(new InlineKeyboardButton().setText("Закончить тренировку").setCallbackData(FINISH_TRAINING.getValue() + exercise.getTraining().getId())));
 
 
