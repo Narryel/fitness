@@ -4,6 +4,7 @@ fitness bot for tracing your training activity
 @BigBicepsBot in Telegram
 
 ## Features to release
+* add proper logging (elk)
 * add change exercise support in training plan
 * add cancel training support (from planning)
 * add delete training from history
