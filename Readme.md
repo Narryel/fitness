@@ -4,6 +4,7 @@ fitness bot for tracing your training activity
 @BigBicepsBot in Telegram
 
 ## Features to release
+* add excersise number in training planning 
 * add repeat training support 
 * add proper logging (elk)
 * add change exercise support in training plan
