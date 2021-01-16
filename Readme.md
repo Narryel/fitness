@@ -7,16 +7,19 @@ fitness bot for tracing your training activity
 * add excersise number in training planning 
 * add repeat training support 
 * add proper logging (elk)
-* add change exercise support in training plan
+* change history display to one month by default
+* add cardio
 * add cancel training support (from planning)
 * add delete training from history
-* add train&go support 
-* add user cabinet
+* add user cabinet (is in needed tho?)
 * add suggest weight (from previous training)
 * add new release features notification
 * add predefined exercises
 * add change exercise support in training plan (is it needed tho?)
 * add start and finish time to training report
+* add rename exercise support
+* add history export
+* ~~add train&go support~~ 
 * ~~support adding exercises in active training~~
 * ~~add user input validation~~
 * ~~add training name~~
