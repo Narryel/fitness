@@ -15,7 +15,7 @@ public interface TrainingRepository extends JpaRepository<Training, Long> {
 
     @Query("from Training training " +
             "where training.user = :user " +
-            "and training.status = 'IN_PLANNING' ")
+            "and training.status = 'IN_PLANNING'")
     Optional<Training> findByUserAndStatusEqualsReady(@Param("user") FitUser user);
 
 

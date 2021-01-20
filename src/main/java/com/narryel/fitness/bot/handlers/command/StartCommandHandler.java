@@ -5,6 +5,7 @@ import com.narryel.fitness.domain.enums.Command;
 import com.narryel.fitness.repository.FitUserRepository;
 import com.narryel.fitness.util.MessageGenerator;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -49,6 +50,7 @@ public class StartCommandHandler implements CommandHandler {
 
     }
 
+    @NotNull
     @Override
     public Command commandToHandle() {
         return START;

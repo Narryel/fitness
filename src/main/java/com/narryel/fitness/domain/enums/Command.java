@@ -20,7 +20,9 @@ public enum Command {
     FINISH_EXERCISE("finishExercise"),
     FINISH_TRAINING("finishTraining"),
     TRAINING_HISTORY("trainingHistory"),
-    VIEW_FINISHED_TRAINING("viewFinishedTraining");
+    VIEW_FINISHED_TRAINING("viewFinishedTraining"),
+    REDO_TRAINING("redoTraining"),
+    DELETE_TRAINING_FROM_HISTORY("deleteTrainingFromHistory");
 
 
     String value;

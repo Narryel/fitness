@@ -7,6 +7,7 @@ import com.narryel.fitness.exceptions.EntityNotFoundException;
 import com.narryel.fitness.repository.FitUserRepository;
 import com.narryel.fitness.repository.TrainingRepository;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -60,6 +61,7 @@ public class ChooseTrainingToStartCommandHandler implements CommandHandler {
         return message;
     }
 
+    @NotNull
     @Override
     public Command commandToHandle() {
         return Command.CHOOSE_TRAINING_TO_START;

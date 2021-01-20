@@ -9,6 +9,7 @@ import com.narryel.fitness.repository.ExerciseRepository;
 import com.narryel.fitness.repository.FitUserRepository;
 import com.narryel.fitness.repository.UserStateRepository;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -74,6 +75,7 @@ public class FinishExerciseCommandHandler implements CommandHandler {
         return message;
     }
 
+    @NotNull
     @Override
     public Command commandToHandle() {
         return Command.FINISH_EXERCISE;

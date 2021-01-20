@@ -4,13 +4,14 @@ fitness bot for tracing your training activity
 @BigBicepsBot in Telegram
 
 ## Features to release
+* add train&go support 
+* add start training from planning menu
 * add excersise number in training planning 
 * add repeat training support 
 * add proper logging (elk)
 * change history display to one month by default
 * add cardio
 * add cancel training support (from planning)
-* add delete training from history
 * add user cabinet (is in needed tho?)
 * add suggest weight (from previous training)
 * add new release features notification
@@ -19,7 +20,7 @@ fitness bot for tracing your training activity
 * add start and finish time to training report
 * add rename exercise support
 * add history export
-* ~~add train&go support~~ 
+* ~~add delete training from history~~
 * ~~support adding exercises in active training~~
 * ~~add user input validation~~
 * ~~add training name~~

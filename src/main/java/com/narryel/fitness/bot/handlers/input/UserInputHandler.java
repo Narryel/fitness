@@ -3,6 +3,7 @@ package com.narryel.fitness.bot.handlers.input;
 import com.narryel.fitness.bot.handlers.input.validation.ValidationResult;
 import com.narryel.fitness.domain.enums.State;
 import org.apache.logging.log4j.util.Strings;
+import org.jetbrains.annotations.NotNull;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -21,10 +22,10 @@ public interface UserInputHandler {
                 .build();
     }
 
-    default Long getChatId(Update update) {
+    default Long getChatId(@NotNull Update update) {
         return update.getMessage().getChatId();
     }
-    default String getText(Update update) {
+    default String getText(@NotNull Update update) {
         return update.getMessage().getText();
     }
 }

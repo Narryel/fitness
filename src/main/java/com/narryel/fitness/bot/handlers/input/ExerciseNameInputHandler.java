@@ -1,7 +1,6 @@
 package com.narryel.fitness.bot.handlers.input;
 
 import com.narryel.fitness.domain.entity.Exercise;
-import com.narryel.fitness.domain.entity.FitUser;
 import com.narryel.fitness.domain.entity.UserState;
 import com.narryel.fitness.domain.enums.State;
 import com.narryel.fitness.domain.enums.TrainingStatus;
@@ -56,7 +55,7 @@ public class ExerciseNameInputHandler implements UserInputHandler {
         final var exerciseList = exerciseRepository.getAllByTraining(training);
 
         switch (training.getStatus()){
-            case IN_PLANNING:{
+            case IN_PLANNING: {
                 final var stringBuilder = new StringBuilder("Упражнение добавлено! \n \nТвоя тренировка: \n");
                 final var keyboard = new ArrayList<List<InlineKeyboardButton>>();
                 exerciseList.forEach(exercise -> stringBuilder.append(exercise.getName()).append("\n"));
@@ -71,7 +70,7 @@ public class ExerciseNameInputHandler implements UserInputHandler {
                 return sendMessage;
             }
 
-            case ACTIVE:{
+            case ACTIVE: {
                 final var keyboard = new ArrayList<List<InlineKeyboardButton>>();
 
                 final var stringBuilder = new StringBuilder("Список выполненных упражнений:\n");

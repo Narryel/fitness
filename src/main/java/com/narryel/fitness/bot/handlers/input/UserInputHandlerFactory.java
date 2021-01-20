@@ -3,6 +3,7 @@ package com.narryel.fitness.bot.handlers.input;
 import com.narryel.fitness.domain.enums.State;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;

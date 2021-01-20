@@ -20,7 +20,6 @@ bot:
       creatorId: ${CREATOR_ID:134614839}
       username: ${TEST_BOT_USERNAME:narryelFitBot}
       token: ${TEST_BOT_TOKEN:1180012456:AAHvREDsUkRyO0cyCJXVngLqD8j_57pVTp8}
-  health-ping: ${PING_ENABLED:false}
 
 cron:
   every_one_minute: '0 */1 * * * *'

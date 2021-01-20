@@ -6,6 +6,7 @@ import com.narryel.fitness.exceptions.EntityNotFoundException;
 import com.narryel.fitness.repository.ExerciseRepository;
 import com.narryel.fitness.repository.TrainingRepository;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -55,6 +56,7 @@ public class FinishTrainingCommandHandler implements CommandHandler {
         return message;
     }
 
+    @NotNull
     @Override
     public Command commandToHandle() {
         return FINISH_TRAINING;

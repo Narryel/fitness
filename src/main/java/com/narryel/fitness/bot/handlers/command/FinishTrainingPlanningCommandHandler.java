@@ -6,6 +6,7 @@ import com.narryel.fitness.repository.FitUserRepository;
 import com.narryel.fitness.repository.TrainingRepository;
 import com.narryel.fitness.util.MessageGenerator;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -32,6 +33,7 @@ public class FinishTrainingPlanningCommandHandler implements CommandHandler {
         return messageGenerator.getMenu(chatId);
     }
 
+    @NotNull
     @Override
     public Command commandToHandle() {
         return FINISH_TRAINING_PLANNING;
