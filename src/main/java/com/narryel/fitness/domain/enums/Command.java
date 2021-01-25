@@ -22,7 +22,8 @@ public enum Command {
     TRAINING_HISTORY("trainingHistory"),
     VIEW_FINISHED_TRAINING("viewFinishedTraining"),
     REDO_TRAINING("redoTraining"),
-    DELETE_TRAINING_FROM_HISTORY("deleteTrainingFromHistory");
+    DELETE_TRAINING_FROM_HISTORY("deleteTrainingFromHistory"),
+    CLEAR_STATE("/clearState");
 
 
     String value;

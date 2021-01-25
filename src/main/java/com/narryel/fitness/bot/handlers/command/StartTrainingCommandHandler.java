@@ -6,6 +6,7 @@ import com.narryel.fitness.domain.enums.TrainingStatus;
 import com.narryel.fitness.exceptions.EntityNotFoundException;
 import com.narryel.fitness.repository.TrainingRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,15 +33,13 @@ public class StartTrainingCommandHandler implements CommandHandler {
     public SendMessage handleCommand(Update update) {
         final var chatId = getChatId(update);
 
-        final var data = update.getCallbackQuery().getData();
-        //delete prefix from callbackData to get trainingId
-        final var trainingId = Long.valueOf(data.replace(START_TRAINING.getValue() + " ", ""));
-        final var training = trainingRepository.findById(trainingId)
+        val trainingId = getEntityIdFromUpdate(update);
+        val training = trainingRepository.findById(trainingId)
                 .orElseThrow(() -> new EntityNotFoundException(trainingId, Training.class));
 
         training.setStatus(TrainingStatus.ACTIVE);
 
-        final var keyboard = new ArrayList<List<InlineKeyboardButton>>();
+        val keyboard = new ArrayList<List<InlineKeyboardButton>>();
         training.getExercises().forEach(exercise -> keyboard.add(
                 List.of(new InlineKeyboardButton()
                         .setText(exercise.getName())
@@ -50,7 +49,7 @@ public class StartTrainingCommandHandler implements CommandHandler {
         keyboard.add(createInlineRow(Pair.of("Добавить еще упражнение", ADD_EXERCISE.getValue() + training.getId())));
         keyboard.add(createInlineRow(Pair.of("Закончить тренировку", FINISH_TRAINING.getValue() + training.getId())));
 
-        final var message = new SendMessage();
+        val message = new SendMessage();
         message.setText("К какому упражнению приступим?");
         message.setReplyMarkup(new InlineKeyboardMarkup(keyboard));
         message.setChatId(chatId);

@@ -5,6 +5,7 @@ import com.narryel.fitness.domain.enums.Command;
 import com.narryel.fitness.repository.FitUserRepository;
 import com.narryel.fitness.util.MessageGenerator;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -26,17 +27,17 @@ public class StartCommandHandler implements CommandHandler {
 
     @Override
     public SendMessage handleCommand(Update update) {
-        final var chatId = getChatId(update);
-        final var optionalFitUser = userRepository.findByChatId(chatId);
+        val chatId = getChatId(update);
+        val optionalFitUser = userRepository.findByChatId(chatId);
 
         if (optionalFitUser.isPresent()) {
             return messageGenerator.getMenu(chatId);
 
         } else {
 
-            final var message = new SendMessage();
-            final var inlineKeyboardMarkup = new InlineKeyboardMarkup();
-            final var button1 = new InlineKeyboardButton();
+            val message = new SendMessage();
+            val inlineKeyboardMarkup = new InlineKeyboardMarkup();
+            val button1 = new InlineKeyboardButton();
             button1.setText("Зарегистрироваться");
             button1.setCallbackData(REGISTER_USER.getValue());
             inlineKeyboardMarkup.setKeyboard(List.of(List.of(button1)));

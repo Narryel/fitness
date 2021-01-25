@@ -62,20 +62,6 @@ public class FitAbilityBot extends AbilityBot {
         return credentials.getCreatorId();
     }
 
-    public Ability clearState() {
-        return Ability
-                .builder()
-                .name("clearstate")
-                .locality(ALL)
-                .privacy(PUBLIC)
-                .action(messageContext -> {
-                    stateRepository.deleteByChatId(messageContext.chatId());
-                    silent.send("стейт почищен", messageContext.chatId());
-                })
-                .build();
-
-    }
-
     public Ability registerUser() {
         return Ability
                 .builder()
@@ -286,6 +272,16 @@ public class FitAbilityBot extends AbilityBot {
                     silent.execute(sendMessage);
                 },
                 callbackDataContains(DELETE_TRAINING_FROM_HISTORY)
+        );
+    }
+
+    public Reply clearState() {
+        return Reply.of(
+                update -> {
+                    val sendMessage = commandHandlerFactory.getHandlerByCommand(CLEAR_STATE).handleCommand(update);
+                    silent.execute(sendMessage);
+                },
+                textEquals(CLEAR_STATE)
         );
     }
 

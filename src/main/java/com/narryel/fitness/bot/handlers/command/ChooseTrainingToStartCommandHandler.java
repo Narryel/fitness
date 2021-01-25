@@ -7,6 +7,7 @@ import com.narryel.fitness.exceptions.EntityNotFoundException;
 import com.narryel.fitness.repository.FitUserRepository;
 import com.narryel.fitness.repository.TrainingRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -29,32 +30,32 @@ public class ChooseTrainingToStartCommandHandler implements CommandHandler {
 
     @Override
     public SendMessage handleCommand(Update update) {
-        final var chatId = Objects.requireNonNull(update.getCallbackQuery().getMessage().getChatId());
+        val chatId = Objects.requireNonNull(update.getCallbackQuery().getMessage().getChatId());
 
-        final var fitUser = userRepository.findByChatId(chatId)
+        val fitUser = userRepository.findByChatId(chatId)
                 .orElseThrow(() -> new EntityNotFoundException("chatId", chatId.toString(), FitUser.class));
 
-        final var plannedTrainingList = trainingRepository.findByUserAndStatus(fitUser, TrainingStatus.READY);
+        val plannedTrainingList = trainingRepository.findByUserAndStatus(fitUser, TrainingStatus.READY);
         if (plannedTrainingList.isEmpty()) {
-            final var message = new SendMessage();
+            val message = new SendMessage();
             message.setChatId(chatId);
             message.setText("Не найдено запланированных тренировок.");
-            final var keyboard = new ArrayList<List<InlineKeyboardButton>>();
+            val keyboard = new ArrayList<List<InlineKeyboardButton>>();
             keyboard.add(List.of(new InlineKeyboardButton().setText("Меню").setCallbackData(GET_MENU.getValue())));
             message.setReplyMarkup(new InlineKeyboardMarkup(keyboard));
             return message;
         }
 
-        final var keyboard = new ArrayList<List<InlineKeyboardButton>>();
+        val keyboard = new ArrayList<List<InlineKeyboardButton>>();
         plannedTrainingList.forEach(training -> keyboard.add(
                 List.of(new InlineKeyboardButton()
                         .setText(training.getName())
-                        .setCallbackData(START_TRAINING.getValue() + " " + training.getId())
+                        .setCallbackData(START_TRAINING.getValue() + "" + training.getId())
                 )
         ));
         keyboard.add(List.of(new InlineKeyboardButton().setText("Меню").setCallbackData(GET_MENU.getValue())));
 
-        final var message = new SendMessage();
+        val message = new SendMessage();
         message.setChatId(chatId);
         message.setText("Какую тренировку стартуем?");
         message.setReplyMarkup(new InlineKeyboardMarkup(keyboard));

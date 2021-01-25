@@ -27,7 +27,6 @@ import static com.narryel.fitness.domain.enums.State.WAITING_FOR_EXERCISE_NAME;
 @RequiredArgsConstructor
 public class ExerciseNameInputHandler implements UserInputHandler {
 
-    private final FitUserRepository userRepository;
     private final TrainingRepository trainingRepository;
     private final ExerciseRepository exerciseRepository;
     private final UserStateRepository stateRepository;
@@ -76,7 +75,7 @@ public class ExerciseNameInputHandler implements UserInputHandler {
                 final var stringBuilder = new StringBuilder("Список выполненных упражнений:\n");
                 exerciseList.forEach(ex -> {
                     if (ex.getStatus() == TrainingStatus.FINISHED) {
-                        stringBuilder.append(ex.getName()).append(String.format(" %s %n", "\u2705"));
+                        stringBuilder.append(ex.getName()).append(String.format(" %s %n", "\u2705")); // <- done emoji
                     } else {
                         keyboard.add(
                                 List.of(new InlineKeyboardButton()

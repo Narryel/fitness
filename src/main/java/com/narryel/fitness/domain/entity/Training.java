@@ -1,12 +1,8 @@
 package com.narryel.fitness.domain.entity;
 
 import com.narryel.fitness.domain.enums.TrainingStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;

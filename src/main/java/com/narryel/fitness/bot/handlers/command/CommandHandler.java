@@ -18,4 +18,8 @@ public interface CommandHandler {
     default String getData(@NotNull Update update) {
         return update.getCallbackQuery().getData();
     }
+
+    default Long getEntityIdFromUpdate(@NotNull Update update){
+        return Long.valueOf(getData(update).replace(commandToHandle().getValue(), ""));
+    }
 }

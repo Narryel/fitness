@@ -6,6 +6,7 @@ import com.narryel.fitness.exceptions.EntityNotFoundException;
 import com.narryel.fitness.repository.ExerciseRepository;
 import com.narryel.fitness.repository.TrainingRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,12 +32,12 @@ public class FinishTrainingCommandHandler implements CommandHandler {
     @Override
     @Transactional
     public SendMessage handleCommand(Update update) {
-        final var trainingId = Long.valueOf(getData(update).replace(FINISH_TRAINING.getValue(), ""));
-        final var training = trainingRepository.findById(trainingId)
+        val trainingId = Long.valueOf(getData(update).replace(FINISH_TRAINING.getValue(), ""));
+        val training = trainingRepository.findById(trainingId)
                 .orElseThrow(() -> new EntityNotFoundException(trainingId, Training.class));
         training.setStatus(FINISHED);
 
-        final var stringBuilder = new StringBuilder("Отчет по тренировке: \n");
+        val stringBuilder = new StringBuilder("Отчет по тренировке: \n");
         exerciseRepository.getAllByTraining(training)
                 .stream()
                 .filter(exercise -> FINISHED.equals(exercise.getStatus()))
@@ -46,10 +47,10 @@ public class FinishTrainingCommandHandler implements CommandHandler {
                 });
 
 
-        final var keyboard = new ArrayList<List<InlineKeyboardButton>>();
+        val keyboard = new ArrayList<List<InlineKeyboardButton>>();
         keyboard.add(List.of(new InlineKeyboardButton().setText("Меню").setCallbackData(GET_MENU.getValue())));
 
-        final var message = new SendMessage();
+        val message = new SendMessage();
         message.setText(stringBuilder.toString());
         message.setChatId(getChatId(update));
         message.setReplyMarkup(new InlineKeyboardMarkup(keyboard));
