@@ -61,7 +61,7 @@ public class ExerciseNameInputHandler implements UserInputHandler {
                 final var keyboard = new ArrayList<List<InlineKeyboardButton>>();
                 exerciseList.forEach(exercise -> stringBuilder.append(exercise.getName()).append("\n"));
 
-                keyboard.add(buildRowWithOneButton("Добавить еще упражнение", ADD_EXERCISE.getValue() + training.getId()));
+                keyboard.add(buildRowWithOneButton("Добавить еще упражнение", setCommandAndIdIntoCallback(ADD_EXERCISE, training.getId())));
                 keyboard.add(buildRowWithOneButton("Достаточно", setCommandAndIdIntoCallback(FINISH_TRAINING_PLANNING, training.getId())));
 
                 final var sendMessage = new SendMessage();
@@ -79,7 +79,7 @@ public class ExerciseNameInputHandler implements UserInputHandler {
                     if (ex.getStatus() == TrainingStatus.FINISHED) {
                         stringBuilder.append(ex.getName()).append(String.format(" %s %n", "\u2705")); // <- done emoji
                     } else {
-                        keyboard.add(buildRowWithOneButton(ex.getName(), START_EXERCISE.getValue() + " " + ex.getId()));
+                        keyboard.add(buildRowWithOneButton(ex.getName(), setCommandAndIdIntoCallback(START_EXERCISE, ex.getId())));
                     }
                 });
                 if (keyboard.isEmpty()) {
@@ -101,7 +101,7 @@ public class ExerciseNameInputHandler implements UserInputHandler {
             }
 
             default:
-                throw new IllegalStateException("странынй статус у тренировки " + training.getStatus());
+                throw new IllegalStateException("Некорректный статус у тренировки " + training.getStatus());
         }
 
 

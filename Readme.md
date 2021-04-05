@@ -4,6 +4,8 @@ fitness bot for tracing your training activity
 @BigBicepsBot in Telegram
 
 ## Features to release
+* add weight suggestion from history training
+* delete all transactional annotations
 * add train&go support 
 * add start training from planning menu
 * add excersise number in training planning 
