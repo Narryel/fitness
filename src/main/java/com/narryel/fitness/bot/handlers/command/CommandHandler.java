@@ -19,7 +19,7 @@ public abstract class CommandHandler implements UpdateHandler {
     abstract Command commandToHandle();
 
     @NotNull
-    protected final Long getEntityIdFromUpdate(@NotNull Update update){
+    protected final Long getEntityIdFromUpdate(@NotNull Update update) {
         return Long.valueOf(getData(update).replace(commandToHandle().getValue(), ""));
     }
 
@@ -51,5 +51,9 @@ public abstract class CommandHandler implements UpdateHandler {
 
     protected final String getData(@NotNull Update update) {
         return update.getCallbackQuery().getData();
+    }
+
+    protected final Long extractIdFromCallbackQuery(@NotNull Update update) {
+        return Long.valueOf(getData(update).replace(commandToHandle().getValue() + " ", ""));
     }
 }

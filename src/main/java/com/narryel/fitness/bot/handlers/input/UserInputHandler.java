@@ -1,6 +1,7 @@
 package com.narryel.fitness.bot.handlers.input;
 
 import com.narryel.fitness.bot.handlers.input.validation.ValidationResult;
+import com.narryel.fitness.domain.enums.Command;
 import com.narryel.fitness.domain.enums.State;
 import lombok.val;
 import org.apache.logging.log4j.util.Strings;
@@ -32,5 +33,9 @@ public interface UserInputHandler {
     }
     default String getText(@NotNull Update update) {
         return update.getMessage().getText();
+    }
+
+    default String setCommandAndIdIntoCallback(Command command, Long id){
+        return command.getValue() + " " + id.toString();
     }
 }

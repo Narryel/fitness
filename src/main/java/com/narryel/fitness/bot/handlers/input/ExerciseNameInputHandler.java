@@ -62,7 +62,7 @@ public class ExerciseNameInputHandler implements UserInputHandler {
                 exerciseList.forEach(exercise -> stringBuilder.append(exercise.getName()).append("\n"));
 
                 keyboard.add(buildRowWithOneButton("Добавить еще упражнение", ADD_EXERCISE.getValue() + training.getId()));
-                keyboard.add(buildRowWithOneButton("Достаточно", FINISH_TRAINING_PLANNING.getValue()));
+                keyboard.add(buildRowWithOneButton("Достаточно", setCommandAndIdIntoCallback(FINISH_TRAINING_PLANNING, training.getId())));
 
                 final var sendMessage = new SendMessage();
                 sendMessage.setText(stringBuilder.toString());
@@ -84,7 +84,6 @@ public class ExerciseNameInputHandler implements UserInputHandler {
                 });
                 if (keyboard.isEmpty()) {
                     stringBuilder.insert(0, "Супер! Все запланированные упражнения выполнены!\n");
-
                 } else {
                     stringBuilder.insert(0, "Отлично! Какое упражнение делаем следующим?\n");
 

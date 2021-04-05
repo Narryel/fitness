@@ -13,7 +13,7 @@ public enum Command {
     EDIT_EXERCISE("editExercise"),
     GET_MENU("getMenu"),
     CHOOSE_TRAINING_TO_START("chooseTrainingToStart"),
-    FINISH_TRAINING_PLANNING("finishTrainingPlanning"),
+    FINISH_TRAINING_PLANNING("finishPlanning"),
     START_TRAINING("startTraining"),
     START_EXERCISE("startExercise"),
     CHANGE_WEIGHT("changeWeight"),
