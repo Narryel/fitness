@@ -1,7 +1,7 @@
 package com.narryel.fitness.bot.handlers.input;
 
 import com.narryel.fitness.bot.handlers.input.validation.ValidationResult;
-import com.narryel.fitness.bot.handlers.input.validation.ValidationMethods;
+import com.narryel.fitness.bot.handlers.input.validation.ValidationService;
 import com.narryel.fitness.domain.entity.Exercise;
 import com.narryel.fitness.domain.entity.UserState;
 import com.narryel.fitness.domain.enums.State;
@@ -24,14 +24,14 @@ public class ExerciseWeightInputHandler implements UserInputHandler {
 
     private final ExerciseRepository exerciseRepository;
     private final UserStateRepository stateRepository;
-    private final ValidationMethods validationMethods;
+    private final ValidationService validationService;
     private static final String INVALID_INPUT_MESSAGE = "Введите вес, с которым будете делать упражнение (число больше нуля)";
 
 
 
     @Override
     @Transactional
-    public SendMessage handle(Update update) {
+    public SendMessage handleUserInput(Update update) {
         final var chatId = update.getMessage().getChatId();
         final var state = stateRepository.findByChatId(chatId)
                 .orElseThrow(() -> new EntityNotFoundException("chatId", chatId.toString(), UserState.class));
@@ -49,13 +49,13 @@ public class ExerciseWeightInputHandler implements UserInputHandler {
 
         final var message = new SendMessage();
         message.setText(String.format("Вес задан на %s . %nНачинаем подход! %nВведите количество повторений", weight.toPlainString()));
-        message.setChatId(chatId);
+        message.setChatId(String.valueOf(chatId));
         return message;
     }
 
     @Override
     public ValidationResult checkInputValidity(Update update) {
-        return validationMethods.checkIfPositiveBigDecimal(update, INVALID_INPUT_MESSAGE);
+        return validationService.checkIfPositiveBigDecimal(update, INVALID_INPUT_MESSAGE);
     }
 
     @Override

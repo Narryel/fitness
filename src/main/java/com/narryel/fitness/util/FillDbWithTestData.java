@@ -40,7 +40,7 @@ public class FillDbWithTestData {
                 .setChatId(134614839L)
                 .setNickName("Narryel")
                 .setStatus(UserStatus.ACTIVE)
-                .setTelegramUserId(134614839)
+                .setTelegramUserId(134614839L)
         );
 
         val persistedTraining = trainingRepository.save(new Training()

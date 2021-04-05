@@ -2,7 +2,6 @@ package com.narryel.fitness.domain.entity;
 
 
 import com.narryel.fitness.domain.enums.UserStatus;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -43,6 +42,6 @@ public class FitUser extends JpaEntity {
     Long chatId;
 
     @Column(unique = true)
-    Integer telegramUserId;
+    Long telegramUserId;
 
 }

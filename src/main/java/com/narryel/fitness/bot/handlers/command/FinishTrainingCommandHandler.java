@@ -24,7 +24,7 @@ import static com.narryel.fitness.domain.enums.TrainingStatus.FINISHED;
 
 @Service
 @RequiredArgsConstructor
-public class FinishTrainingCommandHandler implements CommandHandler {
+public class FinishTrainingCommandHandler extends CommandHandler {
 
     private final TrainingRepository trainingRepository;
     private final ExerciseRepository exerciseRepository;
@@ -48,7 +48,10 @@ public class FinishTrainingCommandHandler implements CommandHandler {
 
 
         val keyboard = new ArrayList<List<InlineKeyboardButton>>();
-        keyboard.add(List.of(new InlineKeyboardButton().setText("Меню").setCallbackData(GET_MENU.getValue())));
+        val menuButton = new InlineKeyboardButton();
+        menuButton.setText("Меню");
+        menuButton.setCallbackData(GET_MENU.getValue());
+        keyboard.add(List.of(menuButton));
 
         val message = new SendMessage();
         message.setText(stringBuilder.toString());

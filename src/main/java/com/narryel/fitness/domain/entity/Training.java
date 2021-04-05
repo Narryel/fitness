@@ -11,6 +11,9 @@ import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
 import javax.persistence.OneToMany;
 import java.util.List;
 
@@ -25,6 +28,15 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE)
 @NoArgsConstructor
 @Accessors(chain = true)
+@NamedEntityGraphs(
+        @NamedEntityGraph(
+                name = "Detailed",
+                attributeNodes = {
+                        @NamedAttributeNode("exercises"),
+                        @NamedAttributeNode("user"),
+                }
+        )
+)
 public class Training extends JpaEntity {
 
     @ManyToOne
@@ -38,6 +50,5 @@ public class Training extends JpaEntity {
     TrainingStatus status;
 
     String name;
-
 
 }

@@ -28,7 +28,7 @@ import static com.narryel.fitness.util.MessageGenerator.createMenuInlineRow;
 
 @Service
 @RequiredArgsConstructor
-public class TrainingHistoryCommandHandler implements CommandHandler {
+public class TrainingHistoryCommandHandler extends CommandHandler {
 
     private final FitUserRepository userRepository;
     private final TrainingRepository trainingRepository;
@@ -37,12 +37,12 @@ public class TrainingHistoryCommandHandler implements CommandHandler {
     @Override
     public SendMessage handleCommand(Update update) {
         val chatId = getChatId(update);
-        val user = userRepository.findByChatId(chatId)
+        val user = userRepository.findByChatId(Long.valueOf(chatId))
                 .orElseThrow(() -> new EntityNotFoundException("chatId", chatId, FitUser.class));
 
         val trainingList = trainingRepository.findByUserAndStatus(user, TrainingStatus.FINISHED);
         val keyboard = getTrainingHistoryKeyboard(trainingList);
-        val message = trainingList.isEmpty()? "История тренировок пуста.": "История тренировок. \n Выбери тренировку:";
+        val message = trainingList.isEmpty() ? "История тренировок пуста." : "История тренировок. \n Выбери тренировку:";
 
         val sendMessage = new SendMessage();
         sendMessage.setText(message);
@@ -55,11 +55,12 @@ public class TrainingHistoryCommandHandler implements CommandHandler {
     public InlineKeyboardMarkup getTrainingHistoryKeyboard(List<Training> trainingList) {
 
         val keyboard = new ArrayList<List<InlineKeyboardButton>>();
-        trainingList.forEach(training -> keyboard.add(
-                List.of(new InlineKeyboardButton()
-                        .setText(String.format("Тренировка \"%s\" от %s", training.getName(), getDateFromInstant(training.getPrePersistDate())))
-                        .setCallbackData(VIEW_FINISHED_TRAINING.getValue() + training.getId()))
-        ));
+        trainingList.forEach(training -> {
+            val getTrainingHistoryButton = new InlineKeyboardButton();
+            getTrainingHistoryButton.setText(String.format("Тренировка \"%s\" от %s", training.getName(), getDateFromInstant(training.getPrePersistDate())));
+            getTrainingHistoryButton.setCallbackData(VIEW_FINISHED_TRAINING.getValue() + training.getId());
+            keyboard.add(List.of(getTrainingHistoryButton));
+        });
         keyboard.add(createMenuInlineRow());
         return new InlineKeyboardMarkup(keyboard);
     }

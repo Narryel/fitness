@@ -15,25 +15,29 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.narryel.fitness.domain.enums.Command.*;
+import static com.narryel.fitness.domain.enums.Command.GET_MENU;
+import static com.narryel.fitness.domain.enums.Command.START_TRAINING;
 
 @Service
 @RequiredArgsConstructor
-public class ChooseTrainingToStartCommandHandler implements CommandHandler {
+@Transactional
+public class ChooseTrainingToStartCommandHandler extends CommandHandler {
 
     private final FitUserRepository userRepository;
     private final TrainingRepository trainingRepository;
 
     @Override
     public SendMessage handleCommand(Update update) {
-        val chatId = Objects.requireNonNull(update.getCallbackQuery().getMessage().getChatId());
 
-        val fitUser = userRepository.findByChatId(chatId)
-                .orElseThrow(() -> new EntityNotFoundException("chatId", chatId.toString(), FitUser.class));
+        val chatId = Objects.requireNonNull(getChatId(update));
+
+        val fitUser = userRepository.findByChatId(Long.valueOf(chatId))
+                .orElseThrow(() -> new EntityNotFoundException("chatId", chatId, FitUser.class));
 
         val plannedTrainingList = trainingRepository.findByUserAndStatus(fitUser, TrainingStatus.READY);
         if (plannedTrainingList.isEmpty()) {
@@ -41,19 +45,27 @@ public class ChooseTrainingToStartCommandHandler implements CommandHandler {
             message.setChatId(chatId);
             message.setText("Не найдено запланированных тренировок.");
             val keyboard = new ArrayList<List<InlineKeyboardButton>>();
-            keyboard.add(List.of(new InlineKeyboardButton().setText("Меню").setCallbackData(GET_MENU.getValue())));
+            val menuButton = new InlineKeyboardButton();
+            menuButton.setText("Меню");
+            menuButton.setCallbackData(GET_MENU.getValue());
+            keyboard.add(List.of(menuButton));
             message.setReplyMarkup(new InlineKeyboardMarkup(keyboard));
             return message;
         }
 
         val keyboard = new ArrayList<List<InlineKeyboardButton>>();
-        plannedTrainingList.forEach(training -> keyboard.add(
-                List.of(new InlineKeyboardButton()
-                        .setText(training.getName())
-                        .setCallbackData(START_TRAINING.getValue() + "" + training.getId())
-                )
-        ));
-        keyboard.add(List.of(new InlineKeyboardButton().setText("Меню").setCallbackData(GET_MENU.getValue())));
+        plannedTrainingList.forEach(training -> {
+            val trainingButton = new InlineKeyboardButton();
+            trainingButton.setText(training.getName());
+            trainingButton.setCallbackData(START_TRAINING.getValue() + "" + training.getId());
+            keyboard.add(
+                    List.of(trainingButton)
+            );
+        });
+        val menuButton = new InlineKeyboardButton();
+        menuButton.setText("Меню");
+        menuButton.setCallbackData(GET_MENU.getValue());
+        keyboard.add(List.of(menuButton));
 
         val message = new SendMessage();
         message.setChatId(chatId);
@@ -67,4 +79,11 @@ public class ChooseTrainingToStartCommandHandler implements CommandHandler {
     public Command commandToHandle() {
         return Command.CHOOSE_TRAINING_TO_START;
     }
+
+
+//    @Override
+//    public Predicate<Update> getHandlerPredicate() {
+//        return callbackDataEquals(CHOOSE_TRAINING_TO_START);
+//    }
+
 }

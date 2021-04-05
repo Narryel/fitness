@@ -1,25 +1,55 @@
 package com.narryel.fitness.bot.handlers.command;
 
+import com.narryel.fitness.bot.handlers.UpdateHandler;
 import com.narryel.fitness.domain.enums.Command;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
+import org.telegram.abilitybots.api.objects.Reply;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-public interface CommandHandler {
+import java.util.function.Predicate;
 
-    SendMessage handleCommand(Update update);
+import static com.narryel.fitness.util.UpdateCheckUtils.callbackDataContains;
 
-    @NotNull Command commandToHandle();
+public abstract class CommandHandler implements UpdateHandler {
 
-    default Long getChatId(@NotNull Update update) {
-        return update.getCallbackQuery().getMessage().getChatId();
-    }
 
-    default String getData(@NotNull Update update) {
-        return update.getCallbackQuery().getData();
-    }
+    @NotNull
+    abstract Command commandToHandle();
 
-    default Long getEntityIdFromUpdate(@NotNull Update update){
+    @NotNull
+    protected final Long getEntityIdFromUpdate(@NotNull Update update){
         return Long.valueOf(getData(update).replace(commandToHandle().getValue(), ""));
+    }
+
+    @Override
+    public final Reply getRespondingReply() {
+        return Reply.of(
+                (bot, update) -> {
+                    val sendMessage = handleUpdate(update);
+                    bot.silent().execute(sendMessage);
+                },
+                getHandlerPredicate()
+        );
+    }
+
+    private Predicate<Update> getHandlerPredicate() {
+        return callbackDataContains(commandToHandle());
+    }
+
+    abstract SendMessage handleCommand(Update update);
+
+    @Override
+    public SendMessage handleUpdate(Update update) {
+        return handleCommand(update);
+    }
+
+    protected String getChatId(@NotNull Update update) {
+        return String.valueOf(update.getCallbackQuery().getMessage().getChatId());
+    }
+
+    protected final String getData(@NotNull Update update) {
+        return update.getCallbackQuery().getData();
     }
 }

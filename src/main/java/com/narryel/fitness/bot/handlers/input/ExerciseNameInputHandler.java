@@ -6,10 +6,10 @@ import com.narryel.fitness.domain.enums.State;
 import com.narryel.fitness.domain.enums.TrainingStatus;
 import com.narryel.fitness.exceptions.EntityNotFoundException;
 import com.narryel.fitness.repository.ExerciseRepository;
-import com.narryel.fitness.repository.FitUserRepository;
 import com.narryel.fitness.repository.TrainingRepository;
 import com.narryel.fitness.repository.UserStateRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -22,6 +22,8 @@ import java.util.List;
 
 import static com.narryel.fitness.domain.enums.Command.*;
 import static com.narryel.fitness.domain.enums.State.WAITING_FOR_EXERCISE_NAME;
+import static com.narryel.fitness.util.MessageGenerator.buildButton;
+import static com.narryel.fitness.util.MessageGenerator.buildRowWithOneButton;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +35,7 @@ public class ExerciseNameInputHandler implements UserInputHandler {
 
     @Override
     @Transactional
-    public SendMessage handle(Update update) {
+    public SendMessage handleUserInput(Update update) {
         final var trainingId = stateRepository.findByChatId(getChatId(update))
                 .map(UserState::getTrainingId)
                 .orElseThrow(EntityNotFoundException::new);
@@ -53,18 +55,18 @@ public class ExerciseNameInputHandler implements UserInputHandler {
 
         final var exerciseList = exerciseRepository.getAllByTraining(training);
 
-        switch (training.getStatus()){
+        switch (training.getStatus()) {
             case IN_PLANNING: {
                 final var stringBuilder = new StringBuilder("Упражнение добавлено! \n \nТвоя тренировка: \n");
                 final var keyboard = new ArrayList<List<InlineKeyboardButton>>();
                 exerciseList.forEach(exercise -> stringBuilder.append(exercise.getName()).append("\n"));
 
-                keyboard.add(List.of(new InlineKeyboardButton().setText("Добавить еще упражнение").setCallbackData(ADD_EXERCISE.getValue() + training.getId())));
-                keyboard.add(List.of(new InlineKeyboardButton().setText("Достаточно").setCallbackData(FINISH_TRAINING_PLANNING.getValue())));
+                keyboard.add(buildRowWithOneButton("Добавить еще упражнение", ADD_EXERCISE.getValue() + training.getId()));
+                keyboard.add(buildRowWithOneButton("Достаточно", FINISH_TRAINING_PLANNING.getValue()));
 
                 final var sendMessage = new SendMessage();
                 sendMessage.setText(stringBuilder.toString());
-                sendMessage.setChatId(update.getMessage().getChatId());
+                sendMessage.setChatId(String.valueOf(update.getMessage().getChatId()));
                 sendMessage.setReplyMarkup(new InlineKeyboardMarkup(keyboard));
                 return sendMessage;
             }
@@ -77,12 +79,7 @@ public class ExerciseNameInputHandler implements UserInputHandler {
                     if (ex.getStatus() == TrainingStatus.FINISHED) {
                         stringBuilder.append(ex.getName()).append(String.format(" %s %n", "\u2705")); // <- done emoji
                     } else {
-                        keyboard.add(
-                                List.of(new InlineKeyboardButton()
-                                        .setText(ex.getName())
-                                        .setCallbackData(START_EXERCISE.getValue() + " " + ex.getId())
-                                )
-                        );
+                        keyboard.add(buildRowWithOneButton(ex.getName(), START_EXERCISE.getValue() + " " + ex.getId()));
                     }
                 });
                 if (keyboard.isEmpty()) {
@@ -93,21 +90,20 @@ public class ExerciseNameInputHandler implements UserInputHandler {
 
                 }
 
-                keyboard.add(List.of(new InlineKeyboardButton().setText("Закончить тренировку").setCallbackData(FINISH_TRAINING.getValue() + training.getId())));
+                keyboard.add(buildRowWithOneButton("Закончить тренировку", FINISH_TRAINING.getValue() + training.getId()));
 
 
                 final var message = new SendMessage();
                 message.setText(stringBuilder.toString());
                 message.setReplyMarkup(new InlineKeyboardMarkup(keyboard));
-                message.setChatId(getChatId(update));
+                message.setChatId(String.valueOf(getChatId(update)));
                 return message;
 
             }
 
-            default: throw new IllegalStateException("странынй статус у тренировки "+ training.getStatus());
+            default:
+                throw new IllegalStateException("странынй статус у тренировки " + training.getStatus());
         }
-
-
 
 
     }
@@ -116,6 +112,5 @@ public class ExerciseNameInputHandler implements UserInputHandler {
     public State stateToHandle() {
         return WAITING_FOR_EXERCISE_NAME;
     }
-
 
 }

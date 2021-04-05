@@ -16,7 +16,7 @@
 
     <properties>
         <java.version>11</java.version>
-        <bot.api.version>4.8.1</bot.api.version>
+        <bot.api.version>5.1.1</bot.api.version>
         <appassembler-maven-plugin.version>2.1.0</appassembler-maven-plugin.version>
     </properties>
 
@@ -104,37 +104,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <!--            build to shell script for heroku-->
-<!--            <plugin>-->
-<!--                <groupId>org.codehaus.mojo</groupId>-->
-<!--                <artifactId>appassembler-maven-plugin</artifactId>-->
-<!--                <version>${appassembler-maven-plugin.version}</version>-->
-<!--                <configuration>-->
-<!--                    <assembleDirectory>target</assembleDirectory>-->
-<!--                    <programs>-->
-<!--                        <program>-->
-<!--                            <mainClass>com.narryel.fitness.FitnessApplication</mainClass>-->
-<!--                            <id>fitBot</id>-->
-<!--                        </program>-->
-<!--                    </programs>-->
-<!--                </configuration>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <phase>package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>assemble</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
-                <configuration>
-                    <release>${java.version}</release>
-                </configuration>
             </plugin>
         </plugins>
     </build>

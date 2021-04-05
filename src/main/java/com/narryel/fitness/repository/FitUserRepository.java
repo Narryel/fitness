@@ -10,7 +10,5 @@ public interface FitUserRepository extends JpaRepository<FitUser, Long> {
 
     Optional<FitUser> findByChatId(Long chatId);
 
-    Optional<FitUser> findByTelegramUserId(Integer telegramId);
-
-    List<FitUser> findAllByNickName(String nickName);
+    Optional<FitUser> findByTelegramUserId(Long telegramId);
 }

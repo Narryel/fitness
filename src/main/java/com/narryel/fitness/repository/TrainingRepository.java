@@ -3,6 +3,7 @@ package com.narryel.fitness.repository;
 import com.narryel.fitness.domain.entity.FitUser;
 import com.narryel.fitness.domain.entity.Training;
 import com.narryel.fitness.domain.enums.TrainingStatus;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +13,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TrainingRepository extends JpaRepository<Training, Long> {
+
+    @Override
+    @EntityGraph("Detailed")
+    Optional<Training> findById(Long id);
 
     @Query("from Training training " +
             "where training.user = :user " +

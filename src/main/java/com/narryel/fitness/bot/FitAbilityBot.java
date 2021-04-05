@@ -1,32 +1,32 @@
 package com.narryel.fitness.bot;
 
-import com.narryel.fitness.bot.handlers.command.CommandHandlerFactory;
+import com.narryel.fitness.bot.handlers.UpdateHandler;
 import com.narryel.fitness.bot.handlers.input.UserInputHandlerFactory;
 import com.narryel.fitness.configuration.properties.AbilityBotCredentials;
 import com.narryel.fitness.domain.entity.UserState;
-import com.narryel.fitness.domain.enums.Command;
 import com.narryel.fitness.exceptions.EntityNotFoundException;
 import com.narryel.fitness.repository.UserStateRepository;
-import com.narryel.fitness.util.MessageGenerator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
 import org.telegram.abilitybots.api.objects.Flag;
 import org.telegram.abilitybots.api.objects.Reply;
+import org.telegram.abilitybots.api.objects.ReplyCollection;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.narryel.fitness.domain.enums.Command.*;
 import static com.narryel.fitness.domain.enums.State.*;
+import static com.narryel.fitness.util.UpdateCheckUtils.callbackDataContains;
+import static com.narryel.fitness.util.UpdateCheckUtils.callbackDataEquals;
 import static org.telegram.abilitybots.api.objects.Locality.ALL;
 import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 
@@ -38,30 +38,28 @@ public class FitAbilityBot extends AbilityBot {
     private final UserStateRepository stateRepository;
     private final AbilityBotCredentials credentials;
     private final UserInputHandlerFactory userInputHandlerFactory;
-    private final CommandHandlerFactory commandHandlerFactory;
-    private final MessageGenerator messageGenerator;
+    private final List<UpdateHandler> updateHandlers;
 
     @Autowired
-    public FitAbilityBot( AbilityBotCredentials credentials,
+    public FitAbilityBot(AbilityBotCredentials credentials,
                          UserStateRepository stateRepository,
                          UserInputHandlerFactory userInputHandlerFactory,
-                         CommandHandlerFactory commandHandlerFactory,
-                         MessageGenerator messageGenerator
+                         List<UpdateHandler> updateHandlers
     ) {
 
         super(credentials.getToken(), credentials.getUserName());
         this.credentials = credentials;
         this.stateRepository = stateRepository;
         this.userInputHandlerFactory = userInputHandlerFactory;
-        this.commandHandlerFactory = commandHandlerFactory;
-        this.messageGenerator = messageGenerator;
+        this.updateHandlers = updateHandlers;
     }
 
     @Override
-    public int creatorId() {
+    public long creatorId() {
         return credentials.getCreatorId();
     }
 
+    //TODO extract to
     public Ability registerUser() {
         return Ability
                 .builder()
@@ -74,8 +72,9 @@ public class FitAbilityBot extends AbilityBot {
                     silent.send("Введите ваш никнейм", ctx.chatId());
                     stateRepository.save(new UserState().setState(WAITING_FOR_USER_NICKNAME).setChatId(ctx.chatId()));
                 })
-                .reply(ctx -> {
-                    val chatId = ctx.getCallbackQuery().getMessage().getChatId();
+
+                .reply((bot, update) -> {
+                    val chatId = update.getCallbackQuery().getMessage().getChatId();
                     silent.send("Введите ваш никнейм", chatId);
                     stateRepository.save(new UserState().setState(WAITING_FOR_USER_NICKNAME).setChatId(chatId));
                 }, callbackDataEquals(REGISTER_USER))
@@ -99,11 +98,11 @@ public class FitAbilityBot extends AbilityBot {
                         val validationResult = handler.checkInputValidity(ctx.update());
                         SendMessage responseMessage;
                         if (validationResult.isMessageValid()) {
-                            responseMessage = handler.handle(ctx.update());
+                            responseMessage = handler.handleUserInput(ctx.update());
                         } else {
-                            responseMessage = new SendMessage()
-                                    .setChatId(ctx.chatId())
-                                    .setText(validationResult.getMessage());
+                            responseMessage = new SendMessage();
+                            responseMessage.setChatId(ctx.chatId().toString());
+                            responseMessage.setText(validationResult.getMessage());
                         }
                         silent.execute(responseMessage);
 
@@ -121,21 +120,31 @@ public class FitAbilityBot extends AbilityBot {
                 .build();
     }
 
-    public Reply start() {
-        Consumer<Update> action = upd -> {
-            val message = commandHandlerFactory.getHandlerByCommand(START).handleCommand(upd);
-            silent.execute(message);
-        };
-        return Reply.of(action, textEquals(START));
+    public ReplyCollection registerAllRepliesFromHandlers() {
+        return new ReplyCollection(
+                updateHandlers
+                        .stream()
+                        .map(UpdateHandler::getRespondingReply)
+                        .collect(Collectors.toList()
+                        )
+        );
     }
 
-    public Reply getMenu() {
-        Consumer<Update> action = upd -> {
-            val chatId = upd.getCallbackQuery().getMessage().getChatId();
-            silent.execute(messageGenerator.getMenu(chatId));
-        };
-        return Reply.of(action, callbackDataEquals(GET_MENU));
-    }
+//    public Reply start() {
+//        Consumer<Update> action = upd -> {
+//            val message = commandHandlerFactory.getHandlerByCommand(START).handleCommand(upd);
+//            silent.execute(message);
+//        };
+//        return Reply.of(action, textEquals(START));
+//    }
+
+//    public Reply getMenu() {
+//        Consumer<Update> action = upd -> {
+//            val chatId = upd.getCallbackQuery().getMessage().getChatId();
+//            silent.execute(messageGenerator.getMenu(chatId));
+//        };
+//        return Reply.of(action, callbackDataEquals(GET_MENU));
+//    }
 
     public Reply planTrainingNameReply() {
         Consumer<Update> action = upd -> {
@@ -159,37 +168,22 @@ public class FitAbilityBot extends AbilityBot {
         return Reply.of(action, callbackDataContains(ADD_EXERCISE));
     }
 
-    public Reply editExercise() {
-        Consumer<Update> action = upd -> {
-            val sendMessage = commandHandlerFactory.getHandlerByCommand(EDIT_EXERCISE).handleCommand(upd);
-            silent.execute(sendMessage);
-        };
-        return Reply.of(action, callbackDataContains(EDIT_EXERCISE));
-    }
+//    public Reply editExercise() {
+//        Consumer<Update> action = upd -> {
+//            val sendMessage = commandHandlerFactory.getHandlerByCommand(EDIT_EXERCISE).handleCommand(upd);
+//            silent.execute(sendMessage);
+//        };
+//        return Reply.of(action, callbackDataContains(EDIT_EXERCISE));
+//    }
 
-    public Reply finishTrainingPlanning() {
-        Consumer<Update> action = upd -> {
-            val message = commandHandlerFactory.getHandlerByCommand(FINISH_TRAINING_PLANNING).handleCommand(upd);
-            silent.execute(message);
-        };
-        return Reply.of(action, callbackDataEquals(FINISH_TRAINING_PLANNING));
-    }
 
-    public Reply chooseTrainingToStart() {
-        Consumer<Update> action = upd -> {
-            val sendMessage = commandHandlerFactory.getHandlerByCommand(CHOOSE_TRAINING_TO_START).handleCommand(upd);
-            silent.execute(sendMessage);
-        };
-        return Reply.of(action, callbackDataEquals(CHOOSE_TRAINING_TO_START));
-    }
-
-    public Reply startTraining() {
-        Consumer<Update> action = upd -> {
-            val sendMessage = commandHandlerFactory.getHandlerByCommand(START_TRAINING).handleCommand(upd);
-            silent.execute(sendMessage);
-        };
-        return Reply.of(action, callbackDataContains(START_TRAINING));
-    }
+//    public Reply startTraining() {
+//        Consumer<Update> action = upd -> {
+//            val sendMessage = commandHandlerFactory.getHandlerByCommand(START_TRAINING).handleCommand(upd);
+//            silent.execute(sendMessage);
+//        };
+//        return Reply.of(action, callbackDataContains(START_TRAINING));
+//    }
 
 
     /**
@@ -221,103 +215,51 @@ public class FitAbilityBot extends AbilityBot {
         return Reply.of(action, callbackDataContains(CHANGE_WEIGHT));
     }
 
-    public Reply finishExercise() {
-        Consumer<Update> action = upd -> {
-            val sendMessage = commandHandlerFactory.getHandlerByCommand(FINISH_EXERCISE).handleCommand(upd);
-            silent.execute(sendMessage);
-        };
-        return Reply.of(action, callbackDataContains(FINISH_EXERCISE));
-    }
+//    public Reply finishExercise() {
+//        Consumer<Update> action = upd -> {
+//            val sendMessage = commandHandlerFactory.getHandlerByCommand(FINISH_EXERCISE).handleCommand(upd);
+//            silent.execute(sendMessage);
+//        };
+//        return Reply.of(action, callbackDataContains(FINISH_EXERCISE));
+//    }
 
-    public Reply finishTraining() {
-        Consumer<Update> action = upd -> {
-            val sendMessage = commandHandlerFactory.getHandlerByCommand(FINISH_TRAINING).handleCommand(upd);
-            silent.execute(sendMessage);
-        };
-        return Reply.of(action, callbackDataContains(FINISH_TRAINING));
-    }
+//    public Reply finishTraining() {
+//        Consumer<Update> action = upd -> {
+//            val sendMessage = commandHandlerFactory.getHandlerByCommand(FINISH_TRAINING).handleUpdate(upd);
+//            silent.execute(sendMessage);
+//        };
+//        return Reply.of(action, callbackDataContains(FINISH_TRAINING));
+//    }
 
-    public Reply openTrainingHistory() {
-        Consumer<Update> action = upd -> {
-            val sendMessage = commandHandlerFactory.getHandlerByCommand(TRAINING_HISTORY).handleCommand(upd);
-            silent.execute(sendMessage);
-        };
-        return Reply.of(action, callbackDataEquals(TRAINING_HISTORY));
-    }
+//    public Reply openTrainingHistory() {
+//        Consumer<Update> action = upd -> {
+//            val sendMessage = commandHandlerFactory.getHandlerByCommand(TRAINING_HISTORY).handleCommand(upd);
+//            silent.execute(sendMessage);
+//        };
+//        return Reply.of(action, callbackDataEquals(TRAINING_HISTORY));
+//    }
 
-    public Reply viewFinishedTraining() {
-        return Reply.of(
-                upd -> {
-                    val sendMessage = commandHandlerFactory.getHandlerByCommand(VIEW_FINISHED_TRAINING).handleCommand(upd);
-                    silent.execute(sendMessage);
-                },
-                callbackDataContains(VIEW_FINISHED_TRAINING)
-        );
-    }
+//    public Reply viewFinishedTraining() {
+//        return Reply.of(
+//                upd -> {
+//                    val sendMessage = commandHandlerFactory.getHandlerByCommand(VIEW_FINISHED_TRAINING).handleCommand(upd);
+//                    silent.execute(sendMessage);
+//                },
+//                callbackDataContains(VIEW_FINISHED_TRAINING)
+//        );
+//    }
 
-    public Reply redoFinishedTraining() {
-        return Reply.of(
-                update -> {
-                    val sendMessage = commandHandlerFactory.getHandlerByCommand(REDO_TRAINING).handleCommand(update);
-                    silent.execute(sendMessage);
-                },
-                callbackDataContains(REDO_TRAINING)
-        );
-    }
 
-    public Reply deleteTrainingFromHistory() {
-        return Reply.of(
-                update -> {
-                    val sendMessage = commandHandlerFactory.getHandlerByCommand(DELETE_TRAINING_FROM_HISTORY).handleCommand(update);
-                    silent.execute(sendMessage);
-                },
-                callbackDataContains(DELETE_TRAINING_FROM_HISTORY)
-        );
-    }
-
-    public Reply clearState() {
-        return Reply.of(
-                update -> {
-                    val sendMessage = commandHandlerFactory.getHandlerByCommand(CLEAR_STATE).handleCommand(update);
-                    silent.execute(sendMessage);
-                },
-                textEquals(CLEAR_STATE)
-        );
-    }
+//    public Reply clearState() {
+//        return Reply.of(
+//                update -> {
+//                    val sendMessage = commandHandlerFactory.getHandlerByCommand(CLEAR_STATE).handleUpdate(update);
+//                    silent.execute(sendMessage);
+//                },
+//                textEquals(CLEAR_STATE)
+//        );
+//    }
 
     //TODO scheduled task to dump all user states and training statuses
 
-
-    private Predicate<Update> callbackDataEquals(Command command) {
-        return update -> {
-            CallbackQuery callbackData = update.getCallbackQuery();
-            if (callbackData == null) {
-                return false;
-            }
-            return command.getValue().equals(callbackData.getData());
-        };
-    }
-
-    private Predicate<Update> callbackDataContains(Command command) {
-        return update -> {
-            CallbackQuery callbackQuery = update.getCallbackQuery();
-            if (callbackQuery == null) {
-                return false;
-            }
-            return callbackQuery.getData().contains(command.getValue());
-        };
-    }
-
-    private Predicate<Update> textEquals(Command command) {
-        return update -> {
-            val message = update.getMessage();
-            if (message == null) {
-                return false;
-            }
-            if (!message.hasText()) {
-                return false;
-            }
-            return command.getValue().equals(message.getText());
-        };
-    }
 }

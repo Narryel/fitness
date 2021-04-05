@@ -10,7 +10,6 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.telegram.abilitybots.api.util.Pair;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -20,11 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.narryel.fitness.domain.enums.Command.*;
-import static com.narryel.fitness.util.MessageGenerator.createInlineRow;
+import static com.narryel.fitness.util.MessageGenerator.buildRowWithOneButton;
 
 @Service
 @RequiredArgsConstructor
-public class StartTrainingCommandHandler implements CommandHandler {
+public class StartTrainingCommandHandler extends CommandHandler {
 
     private final TrainingRepository trainingRepository;
 
@@ -40,14 +39,15 @@ public class StartTrainingCommandHandler implements CommandHandler {
         training.setStatus(TrainingStatus.ACTIVE);
 
         val keyboard = new ArrayList<List<InlineKeyboardButton>>();
-        training.getExercises().forEach(exercise -> keyboard.add(
-                List.of(new InlineKeyboardButton()
-                        .setText(exercise.getName())
-                        .setCallbackData(String.format("%s %d", START_EXERCISE.getValue(), exercise.getId())))
-        ));
+        training.getExercises().forEach(exercise -> {
+            val startExerciseButton = new InlineKeyboardButton();
+            startExerciseButton.setText(exercise.getName());
+            startExerciseButton.setCallbackData(String.format("%s %d", START_EXERCISE.getValue(), exercise.getId()));
+            keyboard.add(List.of(startExerciseButton));
+        });
 
-        keyboard.add(createInlineRow(Pair.of("Добавить еще упражнение", ADD_EXERCISE.getValue() + training.getId())));
-        keyboard.add(createInlineRow(Pair.of("Закончить тренировку", FINISH_TRAINING.getValue() + training.getId())));
+        keyboard.add(buildRowWithOneButton("Добавить еще упражнение", ADD_EXERCISE.getValue() + training.getId()));
+        keyboard.add(buildRowWithOneButton("Закончить тренировку", FINISH_TRAINING.getValue() + training.getId()));
 
         val message = new SendMessage();
         message.setText("К какому упражнению приступим?");

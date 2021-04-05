@@ -6,10 +6,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toUnmodifiableMap;
-
-@Component
 public class CommandHandlerFactory {
 
     private final Map<Command, CommandHandler> handlerMap;
@@ -17,7 +15,7 @@ public class CommandHandlerFactory {
     public CommandHandlerFactory(List<CommandHandler> handlers) {
         handlerMap = handlers
                 .stream()
-                .collect(toUnmodifiableMap(
+                .collect(Collectors.toMap(
                         CommandHandler::commandToHandle,
                         handler -> handler,
                         (oldHandler, newHandler) -> {

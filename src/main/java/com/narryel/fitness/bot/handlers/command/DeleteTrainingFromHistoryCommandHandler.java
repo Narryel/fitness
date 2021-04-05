@@ -11,14 +11,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
+import org.telegram.abilitybots.api.objects.Reply;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.function.Predicate;
+
 import static com.narryel.fitness.domain.enums.Command.DELETE_TRAINING_FROM_HISTORY;
+import static com.narryel.fitness.util.UpdateCheckUtils.callbackDataContains;
 
 @Service
 @RequiredArgsConstructor
-public class DeleteTrainingFromHistoryCommandHandler implements CommandHandler {
+public class DeleteTrainingFromHistoryCommandHandler extends CommandHandler {
 
     private final TrainingRepository trainingRepository;
     private final FitUserRepository userRepository;
@@ -33,7 +37,7 @@ public class DeleteTrainingFromHistoryCommandHandler implements CommandHandler {
 
         trainingRepository.save(training.setStatus(TrainingStatus.HIDDEN));
 
-        val user = userRepository.findByChatId(chatId)
+        val user = userRepository.findByChatId(Long.valueOf(chatId))
                 .orElseThrow(() -> new EntityNotFoundException("chatId", chatId, FitUser.class));
 
         val trainingList = trainingRepository.findByUserAndStatus(user, TrainingStatus.FINISHED);
@@ -54,4 +58,20 @@ public class DeleteTrainingFromHistoryCommandHandler implements CommandHandler {
     public Command commandToHandle() {
         return DELETE_TRAINING_FROM_HISTORY;
     }
+
+//    @Override
+//    public Predicate<Update> getHandlerPredicate() {
+//        return callbackDataContains(DELETE_TRAINING_FROM_HISTORY);
+//    }
+
+//    @Override
+//    public Reply getRespondingReply() {
+//        return Reply.of(
+//                (bot, update) -> {
+//                    val sendMessage = handleCommand(update);
+//                    bot.silent().execute(sendMessage);
+//                },callbackDataContains(DELETE_TRAINING_FROM_HISTORY)
+//
+//        );
+//    }
 }

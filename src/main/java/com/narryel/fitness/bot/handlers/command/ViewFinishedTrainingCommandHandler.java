@@ -22,7 +22,7 @@ import static com.narryel.fitness.util.MessageGenerator.generateInlineKeyboard;
 
 @Service
 @RequiredArgsConstructor
-public class ViewFinishedTrainingCommandHandler implements CommandHandler {
+public class ViewFinishedTrainingCommandHandler extends CommandHandler {
 
     private final TrainingRepository trainingRepository;
 

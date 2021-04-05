@@ -5,7 +5,6 @@ import com.narryel.fitness.domain.entity.Training;
 import com.narryel.fitness.domain.enums.Command;
 import com.narryel.fitness.domain.enums.TrainingStatus;
 import com.narryel.fitness.exceptions.EntityNotFoundException;
-import com.narryel.fitness.repository.FitUserRepository;
 import com.narryel.fitness.repository.TrainingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -21,7 +20,7 @@ import static com.narryel.fitness.util.MessageGenerator.generateOnlyMenuInlineKe
 
 @Service
 @RequiredArgsConstructor
-public class RedoTrainingCommandHandler implements CommandHandler {
+public class RedoTrainingCommandHandler extends CommandHandler {
 
     private final TrainingRepository trainingRepository;
 
@@ -46,7 +45,7 @@ public class RedoTrainingCommandHandler implements CommandHandler {
         newTraining.setExercises(newExerciseList);
         trainingRepository.save(newTraining);
 
-        val sendMessage = new SendMessage(getChatId(update), "Тренировка запланирована!");
+        val sendMessage = new SendMessage(getChatId(update).toString(), "Тренировка запланирована!");
         sendMessage.setReplyMarkup(generateOnlyMenuInlineKeyboard());
         return sendMessage;
     }
@@ -56,4 +55,16 @@ public class RedoTrainingCommandHandler implements CommandHandler {
     public Command commandToHandle() {
         return Command.REDO_TRAINING;
     }
+
+//    @Override
+//    public Reply getRespondingReply() {
+//        return Reply.of(
+//                (bot, update) -> {
+//                    val sendMessage = handleCommand(update);
+//                    bot.silent().execute(sendMessage);
+//                },
+//                callbackDataContains(REDO_TRAINING)
+//        );
+//
+//    }
 }

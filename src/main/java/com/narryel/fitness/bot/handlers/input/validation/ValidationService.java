@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
-public class ValidationMethods {
+public class ValidationService {
 
     public ValidationResult checkIfPositiveBigDecimal(Update update, String message) {
         try {

@@ -4,6 +4,7 @@ import com.narryel.fitness.domain.entity.FitUser;
 import com.narryel.fitness.exceptions.EntityNotFoundException;
 import com.narryel.fitness.repository.FitUserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.stereotype.Service;
 import org.telegram.abilitybots.api.util.Pair;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -33,20 +34,23 @@ public class MessageGenerator {
                 ))
         );
         sendMessage.setText(String.format("%s, Что будем делать?", user.getNickName()));
-        sendMessage.setChatId(chatId);
+        sendMessage.setChatId(String.valueOf(chatId));
         return sendMessage;
     }
 
-    public static List<InlineKeyboardButton> createInlineRow(Pair<String, String> nameToCallbackPair) {
-        return List.of(
-                new InlineKeyboardButton()
-                        .setText(nameToCallbackPair.a())
-                        .setCallbackData(nameToCallbackPair.b())
-        );
+    public static InlineKeyboardButton buildButton(String text, String callbackData) {
+        val button = new InlineKeyboardButton();
+        button.setText(text);
+        button.setCallbackData(callbackData);
+        return button;
+    }
+
+    public static List<InlineKeyboardButton> buildRowWithOneButton(String text, String callbackData) {
+        return List.of(buildButton(text, callbackData));
     }
 
     public static List<InlineKeyboardButton> createMenuInlineRow() {
-        return List.of(new InlineKeyboardButton().setText("Меню").setCallbackData(GET_MENU.getValue()));
+        return buildRowWithOneButton("Меню", GET_MENU.getValue());
     }
 
 
@@ -55,10 +59,7 @@ public class MessageGenerator {
         var inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
 
-        keyboardInfo.forEach(pair -> keyboard.add(List.of(new InlineKeyboardButton()
-                .setText(pair.a())
-                .setCallbackData(pair.b())
-        )));
+        keyboardInfo.forEach(pair -> keyboard.add(buildRowWithOneButton(pair.a(), pair.b())));
 
         inlineKeyboardMarkup.setKeyboard(keyboard);
 

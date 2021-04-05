@@ -20,7 +20,7 @@ import static com.narryel.fitness.domain.enums.Command.START;
 
 @Service
 @RequiredArgsConstructor
-public class StartCommandHandler implements CommandHandler {
+public class StartCommandHandler extends CommandHandler {
     private final FitUserRepository userRepository;
     private final MessageGenerator messageGenerator;
 
@@ -28,10 +28,10 @@ public class StartCommandHandler implements CommandHandler {
     @Override
     public SendMessage handleCommand(Update update) {
         val chatId = getChatId(update);
-        val optionalFitUser = userRepository.findByChatId(chatId);
+        val optionalFitUser = userRepository.findByChatId(Long.valueOf(chatId));
 
         if (optionalFitUser.isPresent()) {
-            return messageGenerator.getMenu(chatId);
+            return messageGenerator.getMenu(Long.valueOf(chatId));
 
         } else {
 
@@ -58,7 +58,7 @@ public class StartCommandHandler implements CommandHandler {
     }
 
     @Override
-    public Long getChatId(Update update) {
-        return update.getMessage().getChatId();
+    public String getChatId(Update update) {
+        return String.valueOf(update.getMessage().getChatId());
     }
 }

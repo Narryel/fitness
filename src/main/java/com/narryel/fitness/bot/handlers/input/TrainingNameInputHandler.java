@@ -2,7 +2,6 @@ package com.narryel.fitness.bot.handlers.input;
 
 import com.narryel.fitness.domain.entity.FitUser;
 import com.narryel.fitness.domain.entity.Training;
-import com.narryel.fitness.domain.entity.UserState;
 import com.narryel.fitness.domain.enums.State;
 import com.narryel.fitness.domain.enums.TrainingStatus;
 import com.narryel.fitness.exceptions.EntityNotFoundException;
@@ -14,8 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-
-import java.util.Optional;
 
 import static com.narryel.fitness.domain.enums.State.WAITING_FOR_EXERCISE_NAME;
 
@@ -29,7 +26,7 @@ public class TrainingNameInputHandler implements UserInputHandler {
 
     @Override
     @Transactional
-    public SendMessage handle(Update update) {
+    public SendMessage handleUserInput(Update update) {
 
         final var user = update.getMessage().getFrom();
         final var trainingName = getText(update);
@@ -44,7 +41,7 @@ public class TrainingNameInputHandler implements UserInputHandler {
 
         final var message = new SendMessage();
         message.setText("Тренировка \"" + training.getName() + "\" создана. \nВведи имя первого упражнения для добавления");
-        message.setChatId(getChatId(update));
+        message.setChatId(String.valueOf(getChatId(update)));
 
         final var state = stateRepository.findByChatId(getChatId(update)).orElseThrow(EntityNotFoundException::new);
         state.setState(WAITING_FOR_EXERCISE_NAME);

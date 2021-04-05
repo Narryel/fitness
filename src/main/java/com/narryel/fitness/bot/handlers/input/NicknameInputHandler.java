@@ -23,7 +23,7 @@ public class NicknameInputHandler implements UserInputHandler {
 
     @Override
     @Transactional
-    public SendMessage handle(Update update) {
+    public SendMessage handleUserInput(Update update) {
         stateRepository.deleteByChatId(update.getMessage().getChatId());
 
         final var fitUser = new FitUser()

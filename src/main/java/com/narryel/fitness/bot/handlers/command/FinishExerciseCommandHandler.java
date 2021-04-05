@@ -1,14 +1,13 @@
 package com.narryel.fitness.bot.handlers.command;
 
 import com.narryel.fitness.domain.entity.Exercise;
-import com.narryel.fitness.domain.entity.FitUser;
 import com.narryel.fitness.domain.enums.Command;
 import com.narryel.fitness.domain.enums.TrainingStatus;
 import com.narryel.fitness.exceptions.EntityNotFoundException;
 import com.narryel.fitness.repository.ExerciseRepository;
-import com.narryel.fitness.repository.FitUserRepository;
 import com.narryel.fitness.repository.UserStateRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,18 +23,17 @@ import static com.narryel.fitness.domain.enums.Command.*;
 
 @Service
 @RequiredArgsConstructor
-public class FinishExerciseCommandHandler implements CommandHandler {
+public class FinishExerciseCommandHandler extends CommandHandler {
 
     private final UserStateRepository stateRepository;
     private final ExerciseRepository exerciseRepository;
-    private final FitUserRepository userRepository;
 
     @Override
     @Transactional
     public SendMessage handleCommand(Update update) {
         final var chatId = getChatId(update);
         final var exerciseId = Long.valueOf(getData(update).replace(FINISH_EXERCISE.getValue() + " ", ""));
-        stateRepository.deleteByChatId(chatId);
+        stateRepository.deleteByChatId(Long.valueOf(chatId));
 
         final var exercise = exerciseRepository.findById(exerciseId)
                 .orElseThrow(() -> new EntityNotFoundException(exerciseId, Exercise.class));
@@ -49,12 +47,10 @@ public class FinishExerciseCommandHandler implements CommandHandler {
             if (ex.getStatus() == TrainingStatus.FINISHED) {
                 stringBuilder.append(ex.getName()).append(String.format(" %s %n", "\u2705"));
             } else {
-                keyboard.add(
-                        List.of(new InlineKeyboardButton()
-                                .setText(ex.getName())
-                                .setCallbackData(START_EXERCISE.getValue() + " " + ex.getId())
-                        )
-                );
+                val exerciseButton = new InlineKeyboardButton();
+                exerciseButton.setText(ex.getName());
+                exerciseButton.setCallbackData(START_EXERCISE.getValue() + " " + ex.getId());
+                keyboard.add(List.of(exerciseButton));
             }
         });
         if (keyboard.isEmpty()) {
@@ -64,8 +60,15 @@ public class FinishExerciseCommandHandler implements CommandHandler {
             stringBuilder.insert(0, "Отлично! Какое упражнение делаем следующим?\n");
 
         }
-        keyboard.add(List.of(new InlineKeyboardButton().setText("Добавить еще упражнение").setCallbackData(ADD_EXERCISE.getValue() + exercise.getTraining().getId())));
-        keyboard.add(List.of(new InlineKeyboardButton().setText("Закончить тренировку").setCallbackData(FINISH_TRAINING.getValue() + exercise.getTraining().getId())));
+        val addExerciseButton = new InlineKeyboardButton();
+        addExerciseButton.setText("Добавить еще упражнение");
+        addExerciseButton.setCallbackData(ADD_EXERCISE.getValue() + exercise.getTraining().getId());
+        keyboard.add(List.of(addExerciseButton));
+        val finishTrainingButton = new InlineKeyboardButton();
+
+        finishTrainingButton.setText("Закончить тренировку");
+        finishTrainingButton.setCallbackData(FINISH_TRAINING.getValue() + exercise.getTraining().getId());
+        keyboard.add(List.of(finishTrainingButton));
 
 
         final var message = new SendMessage();
@@ -80,4 +83,9 @@ public class FinishExerciseCommandHandler implements CommandHandler {
     public Command commandToHandle() {
         return Command.FINISH_EXERCISE;
     }
+
+//    @Override
+//    public Predicate<Update> getHandlerPredicate() {
+//        return null;
+//    }
 }

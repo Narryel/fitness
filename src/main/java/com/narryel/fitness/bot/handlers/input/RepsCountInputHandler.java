@@ -1,7 +1,7 @@
 package com.narryel.fitness.bot.handlers.input;
 
 import com.narryel.fitness.bot.handlers.input.validation.ValidationResult;
-import com.narryel.fitness.bot.handlers.input.validation.ValidationMethods;
+import com.narryel.fitness.bot.handlers.input.validation.ValidationService;
 import com.narryel.fitness.domain.entity.ExerciseSet;
 import com.narryel.fitness.domain.enums.State;
 import com.narryel.fitness.exceptions.EntityNotFoundException;
@@ -22,6 +22,7 @@ import java.util.List;
 import static com.narryel.fitness.domain.enums.Command.CHANGE_WEIGHT;
 import static com.narryel.fitness.domain.enums.Command.FINISH_EXERCISE;
 import static com.narryel.fitness.domain.enums.State.WAITING_FOR_REPS;
+import static com.narryel.fitness.util.MessageGenerator.buildRowWithOneButton;
 
 @Service
 @RequiredArgsConstructor
@@ -31,11 +32,11 @@ public class RepsCountInputHandler implements UserInputHandler {
     private final ExerciseSetRepository setRepository;
     private final ExerciseRepository exerciseRepository;
     private final UserStateRepository stateRepository;
-    private final ValidationMethods validationMethods;
+    private final ValidationService validationService;
 
     @Override
     @Transactional
-    public SendMessage handle(Update update) {
+    public SendMessage handleUserInput(Update update) {
         final var chatId = this.getChatId(update);
         final var repsCount = Integer.valueOf(this.getText(update));
         final var exerciseId = stateRepository.findByChatId(chatId).orElseThrow(EntityNotFoundException::new).getExerciseId();
@@ -56,12 +57,12 @@ public class RepsCountInputHandler implements UserInputHandler {
 
         stringBuilder.append("\n\nВведите кол-во повторений или выберите опцию:");
         final var keyboard = new ArrayList<List<InlineKeyboardButton>>();
-        keyboard.add(List.of(new InlineKeyboardButton().setText("Изменить вес").setCallbackData(CHANGE_WEIGHT.getValue() + "" + exercise.getId())));
-        keyboard.add(List.of(new InlineKeyboardButton().setText("Закончить упражнение").setCallbackData(FINISH_EXERCISE.getValue() + " " + exercise.getId())));
+        keyboard.add(buildRowWithOneButton("Изменить вес",CHANGE_WEIGHT.getValue() + "" + exercise.getId()));
+        keyboard.add(buildRowWithOneButton("Закончить упражнение",FINISH_EXERCISE.getValue() + " " + exercise.getId()));
 
         final var sendMessage = new SendMessage();
         sendMessage.setText(stringBuilder.toString());
-        sendMessage.setChatId(update.getMessage().getChatId());
+        sendMessage.setChatId(String.valueOf(update.getMessage().getChatId()));
         sendMessage.setReplyMarkup(new InlineKeyboardMarkup(keyboard));
         return sendMessage;
 
@@ -75,6 +76,6 @@ public class RepsCountInputHandler implements UserInputHandler {
     @Override
     public ValidationResult checkInputValidity(Update update) {
         //todo change validation to integer or migrate db to bigDecimal
-        return validationMethods.checkIfPositiveInteger(update, INVALID_INPUT_MESSAGE);
+        return validationService.checkIfPositiveInteger(update, INVALID_INPUT_MESSAGE);
     }
 }
