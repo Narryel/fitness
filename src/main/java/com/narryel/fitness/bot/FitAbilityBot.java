@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
 import org.telegram.abilitybots.api.objects.Flag;
+import org.telegram.abilitybots.api.objects.MessageContext;
 import org.telegram.abilitybots.api.objects.Reply;
 import org.telegram.abilitybots.api.objects.ReplyCollection;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -32,7 +33,6 @@ import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 
 @Slf4j
 @Component
-@EnableScheduling
 public class FitAbilityBot extends AbilityBot {
 
     private final UserStateRepository stateRepository;
@@ -90,34 +90,39 @@ public class FitAbilityBot extends AbilityBot {
                 .info("userInput")
                 .locality(ALL)
                 .privacy(PUBLIC)
-                .action(ctx -> {
-                    val optional = stateRepository.findByChatId(ctx.chatId());
-                    if (optional.isPresent()) {
-                        val handler = userInputHandlerFactory
-                                .getHandlerByState(optional.get().getState());
-                        val validationResult = handler.checkInputValidity(ctx.update());
-                        SendMessage responseMessage;
-                        if (validationResult.isMessageValid()) {
-                            responseMessage = handler.handleUserInput(ctx.update());
-                        } else {
-                            responseMessage = new SendMessage();
-                            responseMessage.setChatId(ctx.chatId().toString());
-                            responseMessage.setText(validationResult.getMessage());
-                        }
-                        silent.execute(responseMessage);
-
-                    } else {
-                        if (ctx.update().hasMessage()) {
-                            log.error("can't parse user request. Request text: {}", ctx.update().getMessage().getText());
-                        }
-                        if (ctx.update().hasCallbackQuery()) {
-                            log.error("can't parse user request. Request callbackquery data: {}", ctx.update().getCallbackQuery().getData());
-                        }
-                        silent.send("не понимать", ctx.chatId());
-
-                    }
-                })
+                .action(this::handleUserInput)
                 .build();
+    }
+
+    private void handleUserInput(MessageContext ctx) {
+        val chatId = ctx.chatId();
+        val update = ctx.update();
+
+        val optional = stateRepository.findByChatId(chatId);
+        if (optional.isPresent()) {
+            val handler = userInputHandlerFactory
+                    .getHandlerByState(optional.get().getState());
+            val validationResult = handler.checkInputValidity(update);
+            SendMessage responseMessage;
+            if (validationResult.isMessageValid()) {
+                responseMessage = handler.handleUserInput(update);
+            } else {
+                responseMessage = new SendMessage();
+                responseMessage.setChatId(chatId.toString());
+                responseMessage.setText(validationResult.getMessage());
+            }
+            silent.execute(responseMessage);
+
+        } else {
+            if (update.hasMessage()) {
+                log.error("can't parse user request. Request text: {}", update.getMessage().getText());
+            }
+            if (update.hasCallbackQuery()) {
+                log.error("can't parse user request. Request callbackquery data: {}", update.getCallbackQuery().getData());
+            }
+            //TODO add menu button + finish all stuff
+            silent.send("не понимать", chatId);
+        }
     }
 
     public ReplyCollection registerAllRepliesFromHandlers() {
@@ -129,22 +134,6 @@ public class FitAbilityBot extends AbilityBot {
                         )
         );
     }
-
-//    public Reply start() {
-//        Consumer<Update> action = upd -> {
-//            val message = commandHandlerFactory.getHandlerByCommand(START).handleCommand(upd);
-//            silent.execute(message);
-//        };
-//        return Reply.of(action, textEquals(START));
-//    }
-
-//    public Reply getMenu() {
-//        Consumer<Update> action = upd -> {
-//            val chatId = upd.getCallbackQuery().getMessage().getChatId();
-//            silent.execute(messageGenerator.getMenu(chatId));
-//        };
-//        return Reply.of(action, callbackDataEquals(GET_MENU));
-//    }
 
     public Reply planTrainingNameReply() {
         Consumer<Update> action = upd -> {
@@ -167,24 +156,6 @@ public class FitAbilityBot extends AbilityBot {
         };
         return Reply.of(action, callbackDataContains(ADD_EXERCISE));
     }
-
-//    public Reply editExercise() {
-//        Consumer<Update> action = upd -> {
-//            val sendMessage = commandHandlerFactory.getHandlerByCommand(EDIT_EXERCISE).handleCommand(upd);
-//            silent.execute(sendMessage);
-//        };
-//        return Reply.of(action, callbackDataContains(EDIT_EXERCISE));
-//    }
-
-
-//    public Reply startTraining() {
-//        Consumer<Update> action = upd -> {
-//            val sendMessage = commandHandlerFactory.getHandlerByCommand(START_TRAINING).handleCommand(upd);
-//            silent.execute(sendMessage);
-//        };
-//        return Reply.of(action, callbackDataContains(START_TRAINING));
-//    }
-
 
     /**
      * прокидываем ExerciseId через state, чтобы зафиксировать вес у упражнения
@@ -214,52 +185,5 @@ public class FitAbilityBot extends AbilityBot {
         };
         return Reply.of(action, callbackDataContains(CHANGE_WEIGHT));
     }
-
-//    public Reply finishExercise() {
-//        Consumer<Update> action = upd -> {
-//            val sendMessage = commandHandlerFactory.getHandlerByCommand(FINISH_EXERCISE).handleCommand(upd);
-//            silent.execute(sendMessage);
-//        };
-//        return Reply.of(action, callbackDataContains(FINISH_EXERCISE));
-//    }
-
-//    public Reply finishTraining() {
-//        Consumer<Update> action = upd -> {
-//            val sendMessage = commandHandlerFactory.getHandlerByCommand(FINISH_TRAINING).handleUpdate(upd);
-//            silent.execute(sendMessage);
-//        };
-//        return Reply.of(action, callbackDataContains(FINISH_TRAINING));
-//    }
-
-//    public Reply openTrainingHistory() {
-//        Consumer<Update> action = upd -> {
-//            val sendMessage = commandHandlerFactory.getHandlerByCommand(TRAINING_HISTORY).handleCommand(upd);
-//            silent.execute(sendMessage);
-//        };
-//        return Reply.of(action, callbackDataEquals(TRAINING_HISTORY));
-//    }
-
-//    public Reply viewFinishedTraining() {
-//        return Reply.of(
-//                upd -> {
-//                    val sendMessage = commandHandlerFactory.getHandlerByCommand(VIEW_FINISHED_TRAINING).handleCommand(upd);
-//                    silent.execute(sendMessage);
-//                },
-//                callbackDataContains(VIEW_FINISHED_TRAINING)
-//        );
-//    }
-
-
-//    public Reply clearState() {
-//        return Reply.of(
-//                update -> {
-//                    val sendMessage = commandHandlerFactory.getHandlerByCommand(CLEAR_STATE).handleUpdate(update);
-//                    silent.execute(sendMessage);
-//                },
-//                textEquals(CLEAR_STATE)
-//        );
-//    }
-
-    //TODO scheduled task to dump all user states and training statuses
 
 }

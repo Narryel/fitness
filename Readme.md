@@ -6,6 +6,7 @@ fitness bot for tracing your training activity
 ## Features to release
 * add weight suggestion from history training
 * delete all transactional annotations
+* TECH TASK scheduled task to dump all user states and training statuses
 * add train&go support 
 * add start training from planning menu
 * add excersise number in training planning 

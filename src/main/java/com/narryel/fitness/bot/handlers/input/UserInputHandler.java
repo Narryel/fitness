@@ -31,11 +31,12 @@ public interface UserInputHandler {
     default Long getChatId(@NotNull Update update) {
         return update.getMessage().getChatId();
     }
+
     default String getText(@NotNull Update update) {
         return update.getMessage().getText();
     }
 
-    default String setCommandAndIdIntoCallback(Command command, Long id){
-        return command.getValue() + " " + id.toString();
+    default String setCommandAndIdIntoCallback(Command command, Long id) {
+        return command.getValue() + id.toString();
     }
 }

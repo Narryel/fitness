@@ -27,7 +27,7 @@ public abstract class CommandHandler implements UpdateHandler {
     public final Reply getRespondingReply() {
         return Reply.of(
                 (bot, update) -> {
-                    val sendMessage = handleUpdate(update);
+                    val sendMessage = handleCommand(update);
                     bot.silent().execute(sendMessage);
                 },
                 getHandlerPredicate()
@@ -40,12 +40,7 @@ public abstract class CommandHandler implements UpdateHandler {
 
     abstract SendMessage handleCommand(Update update);
 
-    @Override
-    public SendMessage handleUpdate(Update update) {
-        return handleCommand(update);
-    }
-
-    protected String getChatId(@NotNull Update update) {
+    protected final String getChatId(@NotNull Update update) {
         return String.valueOf(update.getCallbackQuery().getMessage().getChatId());
     }
 
@@ -53,7 +48,4 @@ public abstract class CommandHandler implements UpdateHandler {
         return update.getCallbackQuery().getData();
     }
 
-    protected final Long extractIdFromCallbackQuery(@NotNull Update update) {
-        return Long.valueOf(getData(update).replace(commandToHandle().getValue() + " ", ""));
-    }
 }

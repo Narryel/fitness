@@ -81,9 +81,5 @@ public class ChooseTrainingToStartCommandHandler extends CommandHandler {
     }
 
 
-//    @Override
-//    public Predicate<Update> getHandlerPredicate() {
-//        return callbackDataEquals(CHOOSE_TRAINING_TO_START);
-//    }
 
 }

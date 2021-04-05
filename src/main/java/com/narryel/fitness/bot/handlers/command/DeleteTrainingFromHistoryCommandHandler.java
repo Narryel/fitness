@@ -59,19 +59,4 @@ public class DeleteTrainingFromHistoryCommandHandler extends CommandHandler {
         return DELETE_TRAINING_FROM_HISTORY;
     }
 
-//    @Override
-//    public Predicate<Update> getHandlerPredicate() {
-//        return callbackDataContains(DELETE_TRAINING_FROM_HISTORY);
-//    }
-
-//    @Override
-//    public Reply getRespondingReply() {
-//        return Reply.of(
-//                (bot, update) -> {
-//                    val sendMessage = handleCommand(update);
-//                    bot.silent().execute(sendMessage);
-//                },callbackDataContains(DELETE_TRAINING_FROM_HISTORY)
-//
-//        );
-//    }
 }

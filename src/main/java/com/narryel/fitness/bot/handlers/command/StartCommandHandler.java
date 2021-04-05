@@ -57,8 +57,4 @@ public class StartCommandHandler extends CommandHandler {
         return START;
     }
 
-    @Override
-    public String getChatId(Update update) {
-        return String.valueOf(update.getMessage().getChatId());
-    }
 }

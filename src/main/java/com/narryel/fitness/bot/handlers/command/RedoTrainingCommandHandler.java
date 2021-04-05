@@ -45,7 +45,7 @@ public class RedoTrainingCommandHandler extends CommandHandler {
         newTraining.setExercises(newExerciseList);
         trainingRepository.save(newTraining);
 
-        val sendMessage = new SendMessage(getChatId(update).toString(), "Тренировка запланирована!");
+        val sendMessage = new SendMessage(getChatId(update), "Тренировка запланирована!");
         sendMessage.setReplyMarkup(generateOnlyMenuInlineKeyboard());
         return sendMessage;
     }
@@ -56,15 +56,4 @@ public class RedoTrainingCommandHandler extends CommandHandler {
         return Command.REDO_TRAINING;
     }
 
-//    @Override
-//    public Reply getRespondingReply() {
-//        return Reply.of(
-//                (bot, update) -> {
-//                    val sendMessage = handleCommand(update);
-//                    bot.silent().execute(sendMessage);
-//                },
-//                callbackDataContains(REDO_TRAINING)
-//        );
-//
-//    }
 }

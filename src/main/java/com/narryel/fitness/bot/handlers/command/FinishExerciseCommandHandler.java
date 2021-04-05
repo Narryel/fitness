@@ -84,8 +84,4 @@ public class FinishExerciseCommandHandler extends CommandHandler {
         return Command.FINISH_EXERCISE;
     }
 
-//    @Override
-//    public Predicate<Update> getHandlerPredicate() {
-//        return null;
-//    }
 }
