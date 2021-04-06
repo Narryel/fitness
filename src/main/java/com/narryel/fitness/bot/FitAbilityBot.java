@@ -27,20 +27,20 @@ public class FitAbilityBot extends AbilityBot {
     private final UserStateRepository stateRepository;
     private final AbilityBotCredentials credentials;
     private final UserInputHandlerFactory userInputHandlerFactory;
-    private final List<UpdateHandler> updateHandlers;
+    private final List<UpdateHandler> updateHandlerList;
 
     @Autowired
     public FitAbilityBot(AbilityBotCredentials credentials,
                          UserStateRepository stateRepository,
                          UserInputHandlerFactory userInputHandlerFactory,
-                         List<UpdateHandler> updateHandlers
+                         List<UpdateHandler> updateHandlerList
     ) {
 
         super(credentials.getToken(), credentials.getUserName());
         this.credentials = credentials;
         this.stateRepository = stateRepository;
         this.userInputHandlerFactory = userInputHandlerFactory;
-        this.updateHandlers = updateHandlers;
+        this.updateHandlerList = updateHandlerList;
     }
 
     @Override
@@ -94,7 +94,7 @@ public class FitAbilityBot extends AbilityBot {
 
     public ReplyCollection registerAllRepliesFromHandlers() {
         return new ReplyCollection(
-                updateHandlers
+                updateHandlerList
                         .stream()
                         .map(UpdateHandler::getRespondingReply)
                         .collect(Collectors.toList()
