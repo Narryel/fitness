@@ -16,12 +16,12 @@ public class GetMenuCommandHandler extends CommandHandler {
 
     @NotNull
     @Override
-    Command commandToHandle() {
+    public Command commandToHandle() {
         return Command.GET_MENU;
     }
 
     @Override
-    SendMessage handleCommand(Update update) {
+    public SendMessage handleCommand(Update update) {
         return messageGenerator.getMenu(Long.valueOf(getChatId(update)));
     }
 }

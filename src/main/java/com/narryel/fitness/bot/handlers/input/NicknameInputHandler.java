@@ -1,9 +1,9 @@
 package com.narryel.fitness.bot.handlers.input;
 
-import com.narryel.fitness.dao.UserService;
 import com.narryel.fitness.domain.entity.FitUser;
 import com.narryel.fitness.domain.enums.State;
 import com.narryel.fitness.domain.enums.UserStatus;
+import com.narryel.fitness.repository.FitUserRepository;
 import com.narryel.fitness.repository.UserStateRepository;
 import com.narryel.fitness.util.MessageGenerator;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import static com.narryel.fitness.domain.enums.State.WAITING_FOR_USER_NICKNAME;
 @RequiredArgsConstructor
 public class NicknameInputHandler implements UserInputHandler {
     private final MessageGenerator messageGenerator;
-    private final UserService userService;
+    private final FitUserRepository userRepository;
     private final UserStateRepository stateRepository;
 
     @Override
@@ -32,7 +32,7 @@ public class NicknameInputHandler implements UserInputHandler {
                 .setTelegramUserId(update.getMessage().getFrom().getId())
                 .setStatus(UserStatus.ACTIVE);
 
-        userService.upsertUser(fitUser);
+        userRepository.save(fitUser);
 
 
         return messageGenerator.getMenu(update.getMessage().getChatId());

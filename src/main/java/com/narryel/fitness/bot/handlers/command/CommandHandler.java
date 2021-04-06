@@ -16,7 +16,7 @@ public abstract class CommandHandler implements UpdateHandler {
 
 
     @NotNull
-    abstract Command commandToHandle();
+    protected abstract Command commandToHandle();
 
     @NotNull
     protected final Long getEntityIdFromUpdate(@NotNull Update update) {
@@ -34,11 +34,11 @@ public abstract class CommandHandler implements UpdateHandler {
         );
     }
 
-    private Predicate<Update> getHandlerPredicate() {
+    protected Predicate<Update> getHandlerPredicate() {
         return callbackDataContains(commandToHandle());
     }
 
-    abstract SendMessage handleCommand(Update update);
+    public abstract SendMessage handleCommand(Update update);
 
     protected final String getChatId(@NotNull Update update) {
         return String.valueOf(update.getCallbackQuery().getMessage().getChatId());

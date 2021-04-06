@@ -89,7 +89,7 @@ public class ExerciseNameInputHandler implements UserInputHandler {
 
                 }
 
-                keyboard.add(buildRowWithOneButton("Закончить тренировку", FINISH_TRAINING.getValue() + training.getId()));
+                keyboard.add(buildRowWithOneButton("Закончить тренировку", setCommandAndIdIntoCallback(FINISH_TRAINING, training.getId())));
 
 
                 final var message = new SendMessage();

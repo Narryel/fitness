@@ -13,7 +13,7 @@ public class HealthCheck {
 
     @GetMapping
     public String checkAvailability(){
-        log.info("healthCheck all is good");
+        log.info("healthCheck is all good");
         return "Bot is feeling okay, beep beep bop";
     }
 }

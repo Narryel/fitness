@@ -7,12 +7,11 @@ import com.narryel.fitness.domain.entity.Training;
 import com.narryel.fitness.domain.enums.TrainingStatus;
 import com.narryel.fitness.domain.enums.UserStatus;
 import com.narryel.fitness.repository.ExerciseRepository;
-import com.narryel.fitness.repository.ExerciseSetRepository;
 import com.narryel.fitness.repository.FitUserRepository;
 import com.narryel.fitness.repository.TrainingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.context.annotation.Profile;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,14 +20,13 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Service
-@Profile("dev")
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "fill-with-test-data-enabled", havingValue = "true")
 public class FillDbWithTestData {
 
     private final FitUserRepository userRepository;
     private final TrainingRepository trainingRepository;
     private final ExerciseRepository exerciseRepository;
-    private final ExerciseSetRepository setRepository;
 
 
     @PostConstruct
