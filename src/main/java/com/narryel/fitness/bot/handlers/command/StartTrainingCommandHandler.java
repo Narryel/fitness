@@ -42,7 +42,7 @@ public class StartTrainingCommandHandler extends CommandHandler {
         training.getExercises().forEach(exercise -> {
             val startExerciseButton = new InlineKeyboardButton();
             startExerciseButton.setText(exercise.getName());
-            startExerciseButton.setCallbackData(String.format("%s %d", START_EXERCISE.getValue(), exercise.getId()));
+            startExerciseButton.setCallbackData(String.format("%s%d", START_EXERCISE.getValue(), exercise.getId()));
             keyboard.add(List.of(startExerciseButton));
         });
 
