@@ -11,7 +11,7 @@ spring:
     show-sql: false
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
-fill-with-test-data-enabled: false
+fill-with-test-data-enabled: true
 
 server:
   port: 8080

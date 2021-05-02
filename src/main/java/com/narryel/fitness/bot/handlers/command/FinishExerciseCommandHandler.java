@@ -49,7 +49,7 @@ public class FinishExerciseCommandHandler extends CommandHandler {
             } else {
                 val exerciseButton = new InlineKeyboardButton();
                 exerciseButton.setText(ex.getName());
-                exerciseButton.setCallbackData(START_EXERCISE.getValue() + " " + ex.getId());
+                exerciseButton.setCallbackData(START_EXERCISE.getValue() + ex.getId());
                 keyboard.add(List.of(exerciseButton));
             }
         });
